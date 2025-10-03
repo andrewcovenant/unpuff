@@ -5,6 +5,7 @@ import ProgressWidget from './ProgressWidget';
 import AchievementCard, { Achievement } from './AchievementCard';
 import PanicSupportModal from './PanicSupportModal';
 import OnboardingFlow from './OnboardingFlow';
+import SettingsModal from './SettingsModal';
 import { ThemeToggle } from './ThemeToggle';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -24,6 +25,7 @@ interface UserData {
 export default function QuitTrackerApp() {
   const [isOnboarded, setIsOnboarded] = useState(false);
   const [showPanicModal, setShowPanicModal] = useState(false);
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [puffCount, setPuffCount] = useState(0);
   const [userData, setUserData] = useState<UserData | null>(null);
   const [streak, setStreak] = useState(3); // todo: remove mock functionality
@@ -99,6 +101,15 @@ export default function QuitTrackerApp() {
     console.log('User onboarding completed:', data);
   };
 
+  const handleUpdateSettings = (updates: Partial<UserData>) => {
+    if (userData) {
+      const updatedData = { ...userData, ...updates };
+      setUserData(updatedData);
+      localStorage.setItem('quittracker-userdata', JSON.stringify(updatedData));
+      console.log('Settings updated:', updatedData);
+    }
+  };
+
   const handlePuffCountChange = (count: number) => {
     setPuffCount(count);
     
@@ -142,7 +153,12 @@ export default function QuitTrackerApp() {
                 Day {streak}
               </Badge>
               <ThemeToggle />
-              <Button variant="ghost" size="icon" data-testid="button-settings">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => setShowSettingsModal(true)}
+                data-testid="button-settings"
+              >
                 <Settings className="h-4 w-4" />
               </Button>
             </div>
@@ -297,6 +313,14 @@ export default function QuitTrackerApp() {
       <PanicSupportModal
         open={showPanicModal}
         onOpenChange={setShowPanicModal}
+      />
+
+      {/* Settings Modal */}
+      <SettingsModal
+        open={showSettingsModal}
+        onOpenChange={setShowSettingsModal}
+        userData={userData || undefined}
+        onUpdateSettings={handleUpdateSettings}
       />
     </div>
   );
