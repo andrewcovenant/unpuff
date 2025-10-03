@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Minus, Plus, RotateCcw } from 'lucide-react';
 
 interface PuffCounterProps {
@@ -34,6 +36,28 @@ export default function PuffCounter({ dailyLimit = 10, onCountChange }: PuffCoun
 
   const progressPercentage = Math.min((count / dailyLimit) * 100, 100);
   const isOverLimit = count > dailyLimit;
+  const isApproachingLimit = count >= dailyLimit * 0.7 && count <= dailyLimit;
+
+  const getCircleColor = () => {
+    if (isOverLimit) return "hsl(var(--destructive))"; // Red
+    if (isApproachingLimit) return "hsl(var(--chart-3))"; // Amber
+    return "hsl(var(--primary))"; // Green
+  };
+
+  const getTextColor = () => {
+    if (isOverLimit) return 'text-destructive';
+    if (isApproachingLimit) return 'text-chart-3';
+    return 'text-foreground';
+  };
+
+  const handleManualInput = (value: string) => {
+    const newCount = parseInt(value) || 0;
+    if (newCount >= 0) {
+      setCount(newCount);
+      onCountChange?.(newCount);
+      console.log('Manual count updated:', newCount);
+    }
+  };
 
   return (
     <Card className="p-4 sm:p-6 md:p-8 text-center space-y-4 sm:space-y-6 bg-gradient-to-br from-card to-card/80">
@@ -57,7 +81,7 @@ export default function PuffCounter({ dailyLimit = 10, onCountChange }: PuffCoun
             cx="50"
             cy="50"
             r="45"
-            stroke={isOverLimit ? "hsl(var(--destructive))" : "hsl(var(--primary))"}
+            stroke={getCircleColor()}
             strokeWidth="8"
             fill="none"
             strokeDasharray={`${2 * Math.PI * 45}`}
@@ -67,7 +91,7 @@ export default function PuffCounter({ dailyLimit = 10, onCountChange }: PuffCoun
         </svg>
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center">
-            <div className={`text-5xl sm:text-6xl font-bold font-heading ${isOverLimit ? 'text-destructive' : 'text-foreground'}`}>
+            <div className={`text-5xl sm:text-6xl font-bold font-heading ${getTextColor()}`}>
               {count}
             </div>
             <div className="text-xs sm:text-sm text-muted-foreground">
@@ -75,6 +99,22 @@ export default function PuffCounter({ dailyLimit = 10, onCountChange }: PuffCoun
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Manual Input */}
+      <div className="max-w-xs mx-auto">
+        <Label htmlFor="manual-count" className="text-xs text-muted-foreground">
+          Or enter manually
+        </Label>
+        <Input
+          id="manual-count"
+          type="number"
+          min="0"
+          value={count}
+          onChange={(e) => handleManualInput(e.target.value)}
+          className="text-center mt-1"
+          data-testid="input-manual-count"
+        />
       </div>
 
       {/* Control Buttons */}

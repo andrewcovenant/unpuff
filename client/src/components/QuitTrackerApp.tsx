@@ -6,6 +6,7 @@ import AchievementCard, { Achievement } from './AchievementCard';
 import PanicSupportModal from './PanicSupportModal';
 import OnboardingFlow from './OnboardingFlow';
 import SettingsModal from './SettingsModal';
+import HistoryChart from './HistoryChart';
 import { ThemeToggle } from './ThemeToggle';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -225,7 +226,7 @@ export default function QuitTrackerApp() {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="progress" className="mt-6">
+          <TabsContent value="progress" className="mt-6 space-y-4 sm:space-y-6">
             <ProgressWidget
               currentCount={puffCount}
               dailyLimit={userData?.dailyGoal || 10}
@@ -233,6 +234,8 @@ export default function QuitTrackerApp() {
               moneySaved={totalMoneySaved}
               costPerUnit={userData?.costPerUnit || 1.0}
             />
+            
+            <HistoryChart dailyLimit={userData?.dailyGoal || 10} />
           </TabsContent>
 
           <TabsContent value="achievements" className="mt-4 sm:mt-6 space-y-3 sm:space-y-4">
