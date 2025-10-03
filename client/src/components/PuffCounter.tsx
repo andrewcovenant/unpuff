@@ -39,15 +39,15 @@ export default function PuffCounter({ dailyLimit = 10, onCountChange }: PuffCoun
   const isApproachingLimit = count >= dailyLimit * 0.7 && count <= dailyLimit;
 
   const getCircleColor = () => {
-    if (isOverLimit) return "hsl(var(--destructive))"; // Red
-    if (isApproachingLimit) return "hsl(var(--chart-3))"; // Amber
-    return "hsl(var(--primary))"; // Green
+    if (isOverLimit) return "#F43F5E"; // Red/Error
+    if (isApproachingLimit) return "#F59E0B"; // Amber/Warning
+    return "#34D399"; // Green/Success
   };
 
   const getTextColor = () => {
-    if (isOverLimit) return 'text-destructive';
-    if (isApproachingLimit) return 'text-chart-3';
-    return 'text-foreground';
+    if (isOverLimit) return 'text-error';
+    if (isApproachingLimit) return 'text-warning';
+    return 'text-success';
   };
 
   const handleManualInput = (value: string) => {

@@ -1,69 +1,150 @@
-# Addiction Tracking App Design Guidelines
+# QuitTracker Design System
 
-## Design Approach
-**Reference-Based Approach**: Drawing inspiration from health and wellness apps like Headspace and Calm, combined with productivity tracking apps like Streaks and Habitica. Focus on supportive, non-judgmental design that encourages progress rather than shame.
+## 🎨 Color Palette
 
-## Core Design Principles
-- **Supportive & Encouraging**: Use warm, calming colors that reduce anxiety
-- **Progress-Focused**: Visual emphasis on achievements and positive momentum
-- **Clean & Distraction-Free**: Minimal design to support mental clarity
-- **Accessible**: High contrast and clear typography for all users
+### Core Colors (Dark Mode)
+- **Background**: `#0B0F14` (ink navy) - Main app background
+- **Surface**: `#111824` - Elevated panels and cards
+- **Primary**: `#22D3EE` (electric cyan) - Actions, highlights, CTAs
+- **Accent**: `#A78BFA` (soft violet) - Secondary emphasis, charts
+- **Success**: `#34D399` (mint) - Wins, streaks, goals achieved
+- **Warning**: `#F59E0B` (amber) - Near-limit warnings
+- **Error**: `#F43F5E` (rose) - Limit exceeded, errors
+- **Text**: `#E6EDF6` - Primary text color
+- **Text Muted**: `#9FB0C5` - Secondary/supporting text
+- **Border**: `#1F2A37` - Separators and outlines
 
-## Color Palette
-
-### Primary Colors
-- **Primary**: 142 69% 58% (Calming teal-green for progress and growth)
-- **Secondary**: 220 14% 96% (Soft off-white for backgrounds)
-- **Dark Primary**: 142 69% 25% (Darker teal for dark mode)
-
-### Accent Colors
-- **Success**: 142 76% 36% (Deeper green for achievements)
-- **Warning**: 38 92% 50% (Warm orange for limits, not alarming)
-- **Supportive**: 261 51% 51% (Gentle purple for panic button and support features)
+### Neutrals
+- 900: `#0B0F14`
+- 800: `#111824`
+- 700: `#17202B`
+- 600: `#1F2A37`
+- 500: `#2A3A4B`
+- 400: `#3D4D5E`
+- 300: `#647489`
+- 200: `#9FB0C5`
+- 100: `#D6DFEA`
+- 50: `#F2F6FA`
 
 ### Gradients
-- **Hero Background**: Subtle gradient from 142 69% 58% to 180 69% 58%
-- **Achievement Cards**: Light gradient from 142 20% 97% to 142 15% 95%
+- **Primary Gradient**: `linear-gradient(135deg, #22D3EE 0%, #A78BFA 100%)`
+- **Panic Gradient**: `linear-gradient(135deg, #F43F5E 0%, #FB7185 100%)`
 
-## Typography
-- **Primary**: Inter (clean, readable, supportive feel)
-- **Accent**: Poppins (for headings and achievement text)
-- **Sizes**: Large counter display (4xl-6xl), clear body text (base-lg)
+### Widget Heat Colors (Limit Proximity)
+- **Safe** (≤50% of limit): `#34D399` (success)
+- **Caution** (50-90%): `#F59E0B` (warning)
+- **Danger** (≥90% or exceeded): `#F43F5E` (error)
 
-## Layout System
-**Spacing Units**: Consistent use of Tailwind units 4, 6, 8, 12, 16
-- Generous whitespace for breathing room
-- Card-based layouts with rounded corners (rounded-xl)
-- Central focus on the puff counter with secondary features in organized sections
+## 🔠 Typography
 
-## Component Library
+### Font Stack
+- **Display/Headlines**: Space Grotesk (600-700 weight)
+- **Body/UI**: Inter (400-600 weight)
 
-### Core Components
-- **Large Puff Counter**: Prominent circular button with +/- controls, daily progress ring
-- **Panic Button**: Easily accessible, warm purple color, opens supportive modal
-- **Progress Cards**: Achievement badges, money saved, health improvements
-- **Friend Network**: Simple avatar display with notification settings
+### Font Sizes (Mobile-First)
+- **display-1**: 48px/52px (3rem/3.25rem) - Campaign lines, hero
+- **display-2**: 36px/40px (2.25rem/2.5rem) - Section headers
+- **h1**: 28px/34px (1.75rem/2.125rem)
+- **h2**: 22px/28px (1.375rem/1.75rem)
+- **h3**: 18px/24px (1.125rem/1.5rem)
+- **body-1**: 16px/24px (1rem/1.5rem) - Default body text
+- **body-2**: 14px/20px (0.875rem/1.25rem) - Metadata, helper text
+- **label**: 12px/16px (0.75rem/1rem) - Labels, chips (uppercase)
 
-### Navigation
-- **Bottom Tab Bar**: 4-5 main sections (Counter, Progress, Panic, Friends, Settings)
-- **Modal Overlays**: For panic button features and detailed views
+### Font Weights
+- Display/H1: **700** (bold)
+- H2/H3: **600** (semibold)
+- Body/Label: **400-500** (regular/medium)
 
-### Data Displays
-- **Progress Rings**: Visual representation of daily goals and limits
-- **Achievement Grid**: Badge-style accomplishments with gentle animations
-- **Statistics Cards**: Money saved, days tracked, health metrics
+### Letter Spacing
+- Display: **-0.5%**
+- Labels (uppercase): **+4%**
 
-## Images
-- **No Large Hero Image**: Focus remains on functional elements
-- **Achievement Icons**: Simple, encouraging illustrations for badges
-- **Support Feature Icons**: Calming imagery for meditation, breathing exercises
-- **Avatar Placeholders**: Friendly, inclusive default profile images
+## 📏 Spacing & Layout
 
-## Key UX Considerations
-- **Panic Button Prominence**: Always visible but not anxiety-inducing
-- **Positive Reinforcement**: Celebrate small wins with gentle animations
-- **Non-Judgmental Tracking**: Present data as progress, not failure
-- **Quick Access**: Most important features (counter, panic) accessible in one tap
-- **Customizable Goals**: Flexible target setting during onboarding
+### 8pt Spacing Scale
+- xxs: `4px`
+- xs: `8px`
+- sm: `12px`
+- md: `16px`
+- lg: `24px`
+- xl: `32px`
+- 2xl: `48px`
+- 3xl: `64px`
 
-This design prioritizes mental health support while maintaining functionality, using calming colors and encouraging messaging throughout the user journey.
+### Component Layout
+- **Screen gutters**: 16px (mobile), 24-32px (tablet), 48px (desktop)
+- **Card padding**: 16-20px
+- **List item row height**: 56px (with 16px inset)
+- **Touch targets**: 44x44px minimum
+
+### Border Radii
+- **sm**: `8px` - Inputs, chips
+- **md**: `12px` - Buttons, tags
+- **lg**: `16px` - Cards
+- **xl**: `24px` - Modals, hero containers
+- **pill**: `999px` - Pills, progress capsules
+
+## 🌑 Shadows (Dark Mode)
+
+- **shadow-sm**: `0 1px 0 #0D141D, 0 1px 2px rgba(0,0,0,0.3)`
+- **shadow-md**: `0 0 0 1px #1F2A37, 0 8px 24px rgba(0,0,0,0.35)`
+- **shadow-lg**: `0 0 0 1px #2A3A4B, 0 16px 40px rgba(0,0,0,0.45)`
+
+## 🔖 Component Patterns
+
+### Primary Button (Filled)
+- Background: `#22D3EE` (primary)
+- Text: `#0B0F14` (bg)
+- Radius: `12px`
+- Shadow: `md`
+
+### Primary Button (Ghost)
+- Text: `#22D3EE` (primary)
+- Ring: `#22D3EE` @ 24% opacity on press
+
+### Destructive Button
+- Background: `#F43F5E` (error)
+- Text: `#0B0F14` (bg)
+
+### Success Badge
+- Background: `#063C2E` (success-10)
+- Text: `#34D399` (success)
+- Ring: `#195F4B`
+
+### Warning Chip
+- Background: `#3B2A0B`
+- Text: `#F59E0B` (warning)
+
+### Error Banner
+- Background: `#3B0D18`
+- Border: `#783041`
+- Text: `#FBD5E0`
+
+### Input Field
+- Background: `#111824` (surface)
+- Border: `#1F2A37` (border)
+- Focus ring: `#22D3EE` (primary) - 2px
+
+### Panic Button
+- Background: `linear-gradient(135deg, #F43F5E 0%, #FB7185 100%)`
+- Text: `#0B0F14` (bg)
+- Radius: `24px`
+- Min size: `56px`
+- Pressed state: Add outer glow `0 0 0 8px rgba(244,63,94,0.25)`
+
+## 📊 Widget Color Thresholds
+
+Progress indicator colors based on usage:
+
+- **≤50% of limit**: `#34D399` (success) - Safe zone
+- **50-90% of limit**: `#F59E0B` (warning) - Approaching limit
+- **≥90% or exceeded**: `#F43F5E` (error) - Over limit
+
+## 🎯 Design Principles
+
+1. **Calming & Non-Judgmental**: Use soft gradients and warm feedback
+2. **Mobile-First**: All layouts optimized for touch interaction
+3. **Progressive Feedback**: Visual cues that evolve based on behavior
+4. **Dark by Default**: Optimized for low-light usage and focus
+5. **Accessibility**: Maintain WCAG AA contrast ratios throughout

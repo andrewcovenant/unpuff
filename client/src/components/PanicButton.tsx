@@ -16,7 +16,13 @@ export default function PanicButton({ onClick, className = "" }: PanicButtonProp
     <Button
       onClick={handleClick}
       size="lg"
-      className={`bg-chart-2 hover:bg-chart-2/90 text-white border-0 shadow-lg h-12 sm:h-14 px-6 sm:px-8 font-semibold tracking-wide text-sm sm:text-base ${className}`}
+      className={`h-12 sm:h-14 px-6 sm:px-8 font-semibold tracking-wide text-sm sm:text-base ${className}`}
+      style={{ 
+        background: 'linear-gradient(135deg, #F43F5E 0%, #FB7185 100%)',
+        color: '#0B0F14',
+        border: 'none',
+        borderRadius: '24px'
+      }}
       data-testid="button-panic"
     >
       <Heart className="h-5 w-5 sm:h-6 sm:w-6 mr-2 sm:mr-3 animate-pulse" />

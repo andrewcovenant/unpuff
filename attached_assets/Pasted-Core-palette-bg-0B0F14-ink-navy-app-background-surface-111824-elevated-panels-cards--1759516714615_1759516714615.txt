@@ -1,0 +1,165 @@
+Core palette
+
+--bg: #0B0F14 (ink navy) – app background
+
+--surface: #111824 (elevated panels/cards)
+
+--primary: #22D3EE (electric cyan) – actions, highlights
+
+--accent: #A78BFA (soft violet) – secondary emphasis, charts
+
+--success: #34D399 (mint) – wins, streaks, goals
+
+--warning: #F59E0B (amber) – near-limit cues
+
+--error: #F43F5E (rose) – relapse, panic, errors
+
+--text: #E6EDF6 – primary text
+
+--text-muted: #9FB0C5 – secondary text
+
+--border: #1F2A37 – separators, outlines
+
+Supporting neutrals
+
+--neutral-900: #0B0F14
+
+--neutral-800: #111824
+
+--neutral-700: #17202B
+
+--neutral-600: #1F2A37
+
+--neutral-500: #2A3A4B
+
+--neutral-400: #3D4D5E
+
+--neutral-300: #647489
+
+--neutral-200: #9FB0C5
+
+--neutral-100: #D6DFEA
+
+--neutral-50: #F2F6FA
+
+Gradients (for hero/CTA/panic)
+
+--grad-primary: linear-gradient(135deg, #22D3EE 0%, #A78BFA 100%)
+
+--grad-panic: linear-gradient(135deg, #F43F5E 0%, #FB7185 100%)
+
+Widget heat colors (limit proximity)
+
+Safe: #34D399
+
+Caution: #F59E0B
+
+Danger: #F43F5E
+
+Contrast: Primary #22D3EE on #0B0F14 passes AA for text/icons; use --text on --primary for filled buttons.
+
+🔠 Type
+
+Font stack
+
+Display (headlines / big numbers): Space Grotesk (600–700)
+
+Body/UI: Inter (400–600)
+
+Sizes (mobile-first, scalable)
+
+display-1: 48/52 (3rem/3.25rem) – campaign lines, hero
+
+display-2: 36/40 (2.25rem/2.5rem) – section headers
+
+h1: 28/34 (1.75rem/2.125rem)
+
+h2: 22/28 (1.375rem/1.75rem)
+
+h3: 18/24 (1.125rem/1.5rem)
+
+body-1: 16/24 (1rem/1.5rem) – default body
+
+body-2: 14/20 (0.875rem/1.25rem) – metadata, helper
+
+label: 12/16 (0.75rem/1rem) – caps, chips
+
+Weights
+
+Display/H1: 700
+
+H2/H3: 600
+
+Body/Label: 400–500
+
+Letterspacing
+
+Display: -0.5%
+
+Labels (uppercase): +4%
+
+📏 Spacing & Radii
+
+8pt spacing scale
+
+xxs: 4 | xs: 8 | sm: 12 | md: 16 | lg: 24 | xl: 32 | 2xl: 48 | 3xl: 64
+
+Component layout
+
+Screen gutters: 16 (mobile), 24–32 (tablet), 48 (desktop)
+
+Card padding: 16–20
+
+List item row height: 56 (with 16 inset)
+
+Touch targets: 44x44 min
+
+Radii (friendly but disciplined)
+
+radius-sm: 8px – inputs, chips
+
+radius-md: 12px – buttons, tags
+
+radius-lg: 16px – cards
+
+radius-xl: 24px – modals, hero containers
+
+radius-pill: 999px – pills, progress capsules
+
+Elevation (dark mode)
+
+shadow-sm: subtle ring 0 1px 0 #0D141D, drop 0 1px 2px rgba(0,0,0,0.3)
+
+shadow-md: ring 0 0 0 1px #1F2A37, drop 0 8px 24px rgba(0,0,0,0.35)
+
+shadow-lg: ring 0 0 0 1px #2A3A4B, drop 0 16px 40px rgba(0,0,0,0.45)
+
+🔖 Semantic mappings (use these in the app)
+
+Primary button (filled): bg --primary, text --bg, radius 12px, shadow md
+
+Primary (ghost): text --primary, ring --primary @ 24% on press
+
+Destructive: bg --error, text --bg
+
+Success badges: bg #063C2E (success-10), text #34D399, ring #195F4B
+
+Warning chip: bg #3B2A0B, text #F59E0B
+
+Error banner: bg #3B0D18, border #783041, text #FBD5E0
+
+Input field: bg --surface, border --border, focus ring --primary (2px)
+
+Panic Button
+
+Default: --grad-panic, text #0B0F14, radius 24px, size min 56px
+
+Pressed: add outer glow 0 0 0 8px rgba(244,63,94,0.25)
+
+Widget color thresholds
+
+≤50% of limit: --success
+
+50–90%: --warning
+
+≥90% or exceeded: --error
