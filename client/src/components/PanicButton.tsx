@@ -1,5 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { AlertCircle, Heart } from 'lucide-react';
+import { Haptics, ImpactStyle } from '@capacitor/haptics';
+import { Capacitor } from '@capacitor/core';
 
 interface PanicButtonProps {
   onClick?: () => void;
@@ -7,7 +9,10 @@ interface PanicButtonProps {
 }
 
 export default function PanicButton({ onClick, className = "" }: PanicButtonProps) {
-  const handleClick = () => {
+  const handleClick = async () => {
+    if (Capacitor.isNativePlatform()) {
+      await Haptics.impact({ style: ImpactStyle.Heavy });
+    }
     console.log('Panic button activated - opening support modal');
     onClick?.();
   };

@@ -1,6 +1,8 @@
 import { Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
+import { StatusBar, Style } from '@capacitor/status-bar';
+import { Capacitor } from '@capacitor/core';
 
 export function ThemeToggle() {
   const [theme, setTheme] = useState("light");
@@ -9,13 +11,28 @@ export function ThemeToggle() {
     const savedTheme = localStorage.getItem("theme") || "light";
     setTheme(savedTheme);
     document.documentElement.classList.toggle("dark", savedTheme === "dark");
+    
+    if (Capacitor.isNativePlatform()) {
+      StatusBar.setStyle({ style: savedTheme === "dark" ? Style.Dark : Style.Light });
+      StatusBar.setBackgroundColor({ 
+        color: savedTheme === "dark" ? '#0B0F14' : '#FFFFFF' 
+      });
+    }
   }, []);
 
-  const toggleTheme = () => {
+  const toggleTheme = async () => {
     const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
     localStorage.setItem("theme", newTheme);
     document.documentElement.classList.toggle("dark", newTheme === "dark");
+    
+    if (Capacitor.isNativePlatform()) {
+      await StatusBar.setStyle({ style: newTheme === "dark" ? Style.Dark : Style.Light });
+      await StatusBar.setBackgroundColor({ 
+        color: newTheme === "dark" ? '#0B0F14' : '#FFFFFF' 
+      });
+    }
+    
     console.log('Theme toggled to:', newTheme);
   };
 

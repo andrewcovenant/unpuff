@@ -134,7 +134,10 @@ export default function QuitTrackerApp() {
   const isOverLimit = userData ? puffCount > userData.dailyGoal : false;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background" style={{ 
+      paddingTop: 'var(--safe-area-inset-top)',
+      paddingBottom: 'var(--safe-area-inset-bottom)'
+    }}>
       {/* Header */}
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-40">
         <div className="w-full px-3 sm:px-4 py-3 sm:py-4">

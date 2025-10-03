@@ -4,6 +4,8 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Minus, Plus, RotateCcw } from 'lucide-react';
+import { Haptics, ImpactStyle } from '@capacitor/haptics';
+import { Capacitor } from '@capacitor/core';
 
 interface PuffCounterProps {
   dailyLimit?: number;
@@ -14,21 +16,30 @@ export default function PuffCounter({ dailyLimit = 10, onCountChange }: PuffCoun
   const [count, setCount] = useState(0);
   const [todayDate] = useState(() => new Date().toLocaleDateString());
 
-  const handleIncrement = () => {
+  const handleIncrement = async () => {
+    if (Capacitor.isNativePlatform()) {
+      await Haptics.impact({ style: ImpactStyle.Light });
+    }
     const newCount = count + 1;
     setCount(newCount);
     onCountChange?.(newCount);
     console.log('Puff count incremented:', newCount);
   };
 
-  const handleDecrement = () => {
+  const handleDecrement = async () => {
+    if (Capacitor.isNativePlatform()) {
+      await Haptics.impact({ style: ImpactStyle.Light });
+    }
     const newCount = Math.max(0, count - 1);
     setCount(newCount);
     onCountChange?.(newCount);
     console.log('Puff count decremented:', newCount);
   };
 
-  const handleReset = () => {
+  const handleReset = async () => {
+    if (Capacitor.isNativePlatform()) {
+      await Haptics.impact({ style: ImpactStyle.Medium });
+    }
     setCount(0);
     onCountChange?.(0);
     console.log('Puff count reset');
