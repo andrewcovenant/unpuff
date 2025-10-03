@@ -18,7 +18,11 @@ export default function PuffCounter({ dailyLimit = 10, onCountChange }: PuffCoun
 
   const handleIncrement = async () => {
     if (Capacitor.isNativePlatform()) {
-      await Haptics.impact({ style: ImpactStyle.Light });
+      try {
+        await Haptics.impact({ style: ImpactStyle.Light });
+      } catch (error) {
+        console.error('Haptic feedback failed:', error);
+      }
     }
     const newCount = count + 1;
     setCount(newCount);
@@ -28,7 +32,11 @@ export default function PuffCounter({ dailyLimit = 10, onCountChange }: PuffCoun
 
   const handleDecrement = async () => {
     if (Capacitor.isNativePlatform()) {
-      await Haptics.impact({ style: ImpactStyle.Light });
+      try {
+        await Haptics.impact({ style: ImpactStyle.Light });
+      } catch (error) {
+        console.error('Haptic feedback failed:', error);
+      }
     }
     const newCount = Math.max(0, count - 1);
     setCount(newCount);
@@ -38,7 +46,11 @@ export default function PuffCounter({ dailyLimit = 10, onCountChange }: PuffCoun
 
   const handleReset = async () => {
     if (Capacitor.isNativePlatform()) {
-      await Haptics.impact({ style: ImpactStyle.Medium });
+      try {
+        await Haptics.impact({ style: ImpactStyle.Medium });
+      } catch (error) {
+        console.error('Haptic feedback failed:', error);
+      }
     }
     setCount(0);
     onCountChange?.(0);

@@ -11,7 +11,11 @@ interface PanicButtonProps {
 export default function PanicButton({ onClick, className = "" }: PanicButtonProps) {
   const handleClick = async () => {
     if (Capacitor.isNativePlatform()) {
-      await Haptics.impact({ style: ImpactStyle.Heavy });
+      try {
+        await Haptics.impact({ style: ImpactStyle.Heavy });
+      } catch (error) {
+        console.error('Haptic feedback failed:', error);
+      }
     }
     console.log('Panic button activated - opening support modal');
     onClick?.();

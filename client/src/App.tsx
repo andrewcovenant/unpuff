@@ -28,12 +28,20 @@ function App() {
         try {
           await StatusBar.setStyle({ style: Style.Dark });
           await StatusBar.setBackgroundColor({ color: '#0B0F14' });
-          
-          await SplashScreen.hide();
-          
-          Keyboard.setAccessoryBarVisible({ isVisible: false });
         } catch (error) {
-          console.error('Error initializing Capacitor:', error);
+          console.error('Capacitor StatusBar initialization failed:', error);
+        }
+
+        try {
+          await SplashScreen.hide();
+        } catch (error) {
+          console.error('Capacitor SplashScreen hide failed:', error);
+        }
+
+        try {
+          await Keyboard.setAccessoryBarVisible({ isVisible: false });
+        } catch (error) {
+          console.error('Capacitor Keyboard configuration failed:', error);
         }
       }
     };

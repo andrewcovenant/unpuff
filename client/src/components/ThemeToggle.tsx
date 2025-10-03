@@ -13,10 +13,14 @@ export function ThemeToggle() {
     document.documentElement.classList.toggle("dark", savedTheme === "dark");
     
     if (Capacitor.isNativePlatform()) {
-      StatusBar.setStyle({ style: savedTheme === "dark" ? Style.Dark : Style.Light });
-      StatusBar.setBackgroundColor({ 
-        color: savedTheme === "dark" ? '#0B0F14' : '#FFFFFF' 
-      });
+      try {
+        StatusBar.setStyle({ style: savedTheme === "dark" ? Style.Dark : Style.Light });
+        StatusBar.setBackgroundColor({ 
+          color: savedTheme === "dark" ? '#0B0F14' : '#FFFFFF' 
+        });
+      } catch (error) {
+        console.error('Failed to set StatusBar theme on init:', error);
+      }
     }
   }, []);
 
@@ -27,10 +31,14 @@ export function ThemeToggle() {
     document.documentElement.classList.toggle("dark", newTheme === "dark");
     
     if (Capacitor.isNativePlatform()) {
-      await StatusBar.setStyle({ style: newTheme === "dark" ? Style.Dark : Style.Light });
-      await StatusBar.setBackgroundColor({ 
-        color: newTheme === "dark" ? '#0B0F14' : '#FFFFFF' 
-      });
+      try {
+        await StatusBar.setStyle({ style: newTheme === "dark" ? Style.Dark : Style.Light });
+        await StatusBar.setBackgroundColor({ 
+          color: newTheme === "dark" ? '#0B0F14' : '#FFFFFF' 
+        });
+      } catch (error) {
+        console.error('Failed to update StatusBar theme:', error);
+      }
     }
     
     console.log('Theme toggled to:', newTheme);
