@@ -71,7 +71,7 @@ export default function PanicSupportModal({ open, onOpenChange }: PanicSupportMo
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="w-[95vw] sm:max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader className="space-y-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-chart-2/20 flex items-center justify-center">

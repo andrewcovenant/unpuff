@@ -95,8 +95,8 @@ export default function OnboardingFlow({ onComplete, onClose }: OnboardingFlowPr
   const Icon = currentStep.icon;
 
   return (
-    <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-lg">
+    <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4">
+      <Card className="w-full max-w-lg max-h-[95vh] overflow-y-auto">
         <CardHeader className="text-center space-y-4">
           <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
             <Icon className="h-8 w-8 text-primary" />

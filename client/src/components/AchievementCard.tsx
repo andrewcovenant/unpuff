@@ -30,17 +30,17 @@ export default function AchievementCard({ achievement }: AchievementCardProps) {
 
   return (
     <Card className={`hover-elevate transition-all duration-200 ${achievement.unlocked ? 'border-primary/40 bg-primary/5' : 'border-border'}`}>
-      <CardContent className="p-6">
-        <div className="flex items-start gap-4">
+      <CardContent className="p-3 sm:p-4 md:p-6">
+        <div className="flex items-start gap-3 sm:gap-4">
           {/* Icon/Status */}
           <div className="flex-shrink-0">
             {achievement.unlocked ? (
-              <div className={`w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center ${colorClass}`}>
-                <CheckCircle className="h-6 w-6" />
+              <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/10 flex items-center justify-center ${colorClass}`}>
+                <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6" />
               </div>
             ) : (
-              <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center text-muted-foreground">
-                <Lock className="h-6 w-6" />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-muted flex items-center justify-center text-muted-foreground">
+                <Lock className="h-5 w-5 sm:h-6 sm:w-6" />
               </div>
             )}
           </div>
@@ -48,8 +48,8 @@ export default function AchievementCard({ achievement }: AchievementCardProps) {
           {/* Content */}
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-2">
-              <div>
-                <h3 className={`font-semibold text-sm ${achievement.unlocked ? colorClass : 'text-muted-foreground'}`}>
+              <div className="min-w-0 flex-1">
+                <h3 className={`font-semibold text-xs sm:text-sm ${achievement.unlocked ? colorClass : 'text-muted-foreground'}`}>
                   {achievement.title}
                 </h3>
                 <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
@@ -57,7 +57,7 @@ export default function AchievementCard({ achievement }: AchievementCardProps) {
                 </p>
               </div>
               {achievement.unlocked && (
-                <Badge variant="outline" className="text-xs">
+                <Badge variant="outline" className="text-xs flex-shrink-0">
                   Unlocked
                 </Badge>
               )}

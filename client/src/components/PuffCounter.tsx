@@ -36,14 +36,14 @@ export default function PuffCounter({ dailyLimit = 10, onCountChange }: PuffCoun
   const isOverLimit = count > dailyLimit;
 
   return (
-    <Card className="p-8 text-center space-y-6 bg-gradient-to-br from-card to-card/80">
-      <div className="space-y-2">
-        <h2 className="text-sm font-medium text-muted-foreground">Today's Count</h2>
+    <Card className="p-4 sm:p-6 md:p-8 text-center space-y-4 sm:space-y-6 bg-gradient-to-br from-card to-card/80">
+      <div className="space-y-1 sm:space-y-2">
+        <h2 className="text-xs sm:text-sm font-medium text-muted-foreground">Today's Count</h2>
         <p className="text-xs text-muted-foreground">{todayDate}</p>
       </div>
       
       {/* Progress Ring Visual */}
-      <div className="relative w-48 h-48 mx-auto">
+      <div className="relative w-40 h-40 sm:w-48 sm:h-48 mx-auto">
         <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
           <circle
             cx="50"
@@ -67,10 +67,10 @@ export default function PuffCounter({ dailyLimit = 10, onCountChange }: PuffCoun
         </svg>
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center">
-            <div className={`text-6xl font-bold font-heading ${isOverLimit ? 'text-destructive' : 'text-foreground'}`}>
+            <div className={`text-5xl sm:text-6xl font-bold font-heading ${isOverLimit ? 'text-destructive' : 'text-foreground'}`}>
               {count}
             </div>
-            <div className="text-sm text-muted-foreground">
+            <div className="text-xs sm:text-sm text-muted-foreground">
               of {dailyLimit}
             </div>
           </div>
@@ -78,41 +78,41 @@ export default function PuffCounter({ dailyLimit = 10, onCountChange }: PuffCoun
       </div>
 
       {/* Control Buttons */}
-      <div className="flex items-center justify-center gap-4">
+      <div className="flex items-center justify-center gap-3 sm:gap-4">
         <Button
           size="icon"
           variant="outline"
           onClick={handleDecrement}
           disabled={count === 0}
-          className="h-12 w-12"
+          className="h-10 w-10 sm:h-12 sm:w-12"
           data-testid="button-decrement"
         >
-          <Minus className="h-6 w-6" />
+          <Minus className="h-5 w-5 sm:h-6 sm:w-6" />
         </Button>
         
         <Button
           size="lg"
           onClick={handleIncrement}
-          className="h-16 w-16 rounded-full text-xl font-bold"
+          className="h-14 w-14 sm:h-16 sm:w-16 rounded-full text-xl font-bold"
           data-testid="button-increment"
         >
-          <Plus className="h-8 w-8" />
+          <Plus className="h-7 w-7 sm:h-8 sm:w-8" />
         </Button>
         
         <Button
           size="icon"
           variant="outline"
           onClick={handleReset}
-          className="h-12 w-12"
+          className="h-10 w-10 sm:h-12 sm:w-12"
           data-testid="button-reset"
         >
-          <RotateCcw className="h-6 w-6" />
+          <RotateCcw className="h-5 w-5 sm:h-6 sm:w-6" />
         </Button>
       </div>
 
       {isOverLimit && (
-        <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/20">
-          <p className="text-sm text-destructive font-medium">
+        <div className="p-3 sm:p-4 rounded-lg bg-destructive/10 border border-destructive/20">
+          <p className="text-xs sm:text-sm text-destructive font-medium">
             You've exceeded your daily limit. Consider using the panic button for support.
           </p>
         </div>
