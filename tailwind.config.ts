@@ -9,19 +9,19 @@ export default {
         bg: '#0B0F14',
         surface: '#111824',
         primary: {
-          DEFAULT: '#22D3EE',
-          foreground: '#0B0F14'
+          DEFAULT: 'hsl(var(--primary) / <alpha-value>)',
+          foreground: 'hsl(var(--primary-foreground) / <alpha-value>)'
         },
         accent: {
-          DEFAULT: '#A78BFA',
-          foreground: '#0B0F14'
+          DEFAULT: 'hsl(var(--accent) / <alpha-value>)',
+          foreground: 'hsl(var(--accent-foreground) / <alpha-value>)'
         },
-        success: '#34D399',
-        warning: '#F59E0B',
-        error: '#F43F5E',
-        text: '#E6EDF6',
-        'text-muted': '#9FB0C5',
-        border: '#1F2A37',
+        success: 'var(--success)',
+        warning: 'var(--warning)',
+        error: 'var(--error)',
+        text: 'var(--text)',
+        'text-muted': 'var(--text-muted)',
+        border: 'hsl(var(--border) / <alpha-value>)',
         
         // Neutrals
         neutral: {
@@ -38,61 +38,61 @@ export default {
         },
         
         // Shadcn compatibility
-        background: '#0B0F14',
-        foreground: '#E6EDF6',
+        background: 'hsl(var(--background) / <alpha-value>)',
+        foreground: 'hsl(var(--foreground) / <alpha-value>)',
         card: {
-          DEFAULT: '#111824',
-          foreground: '#E6EDF6',
-          border: '#1F2A37',
+          DEFAULT: 'hsl(var(--card) / <alpha-value>)',
+          foreground: 'hsl(var(--card-foreground) / <alpha-value>)',
+          border: 'hsl(var(--card-border) / <alpha-value>)',
         },
         popover: {
-          DEFAULT: '#111824',
-          foreground: '#E6EDF6',
-          border: '#1F2A37',
+          DEFAULT: 'hsl(var(--popover) / <alpha-value>)',
+          foreground: 'hsl(var(--popover-foreground) / <alpha-value>)',
+          border: 'hsl(var(--popover-border) / <alpha-value>)',
         },
         secondary: {
-          DEFAULT: '#2A3A4B',
-          foreground: '#E6EDF6',
-          border: '#3D4D5E',
+          DEFAULT: 'hsl(var(--secondary) / <alpha-value>)',
+          foreground: 'hsl(var(--secondary-foreground) / <alpha-value>)',
+          border: 'var(--secondary-border)',
         },
         muted: {
-          DEFAULT: '#1F2A37',
-          foreground: '#9FB0C5',
-          border: '#2A3A4B',
+          DEFAULT: 'hsl(var(--muted) / <alpha-value>)',
+          foreground: 'hsl(var(--muted-foreground) / <alpha-value>)',
+          border: 'var(--muted-border)',
         },
         destructive: {
-          DEFAULT: '#F43F5E',
-          foreground: '#0B0F14',
-          border: '#F43F5E',
+          DEFAULT: 'hsl(var(--destructive) / <alpha-value>)',
+          foreground: 'hsl(var(--destructive-foreground) / <alpha-value>)',
+          border: 'var(--destructive-border)',
         },
-        input: '#1F2A37',
-        ring: '#22D3EE',
+        input: 'hsl(var(--input) / <alpha-value>)',
+        ring: 'hsl(var(--ring) / <alpha-value>)',
         
         // Chart colors
         chart: {
-          "1": '#34D399',
-          "2": '#22D3EE',
-          "3": '#F59E0B',
-          "4": '#A78BFA',
-          "5": '#F43F5E'
+          "1": 'hsl(var(--chart-1) / <alpha-value>)',
+          "2": 'hsl(var(--chart-2) / <alpha-value>)',
+          "3": 'hsl(var(--chart-3) / <alpha-value>)',
+          "4": 'hsl(var(--chart-4) / <alpha-value>)',
+          "5": 'hsl(var(--chart-5) / <alpha-value>)'
         },
         
         // Sidebar
         sidebar: {
-          ring: '#22D3EE',
-          DEFAULT: '#111824',
-          foreground: '#E6EDF6',
-          border: '#1F2A37',
+          ring: 'hsl(var(--sidebar-ring) / <alpha-value>)',
+          DEFAULT: 'hsl(var(--sidebar) / <alpha-value>)',
+          foreground: 'hsl(var(--sidebar-foreground) / <alpha-value>)',
+          border: 'hsl(var(--sidebar-border) / <alpha-value>)',
         },
         "sidebar-primary": {
-          DEFAULT: '#22D3EE',
-          foreground: '#0B0F14',
-          border: '#22D3EE',
+          DEFAULT: 'hsl(var(--sidebar-primary) / <alpha-value>)',
+          foreground: 'hsl(var(--sidebar-primary-foreground) / <alpha-value>)',
+          border: 'var(--sidebar-primary-border)',
         },
         "sidebar-accent": {
-          DEFAULT: '#2A3A4B',
-          foreground: '#E6EDF6',
-          border: '#3D4D5E'
+          DEFAULT: 'hsl(var(--sidebar-accent) / <alpha-value>)',
+          foreground: 'hsl(var(--sidebar-accent-foreground) / <alpha-value>)',
+          border: 'var(--sidebar-accent-border)'
         },
         status: {
           online: '#34D399',
