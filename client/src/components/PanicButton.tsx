@@ -18,8 +18,8 @@ export default function PanicButton({ onClick, className = "" }: PanicButtonProp
       size="lg"
       className={`h-12 sm:h-14 px-6 sm:px-8 font-semibold tracking-wide text-sm sm:text-base ${className}`}
       style={{ 
-        background: 'linear-gradient(135deg, #F43F5E 0%, #FB7185 100%)',
-        color: '#0B0F14',
+        background: 'var(--grad-panic)',
+        color: 'var(--bg)',
         border: 'none',
         borderRadius: '24px'
       }}

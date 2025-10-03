@@ -4,19 +4,108 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Design System - Dark Mode Theme */
+/* Design System - Light Mode (Default) */
 :root {
-  --button-outline: rgba(255,255,255, .10);
-  --badge-outline: rgba(255,255,255, .05);
+  --button-outline: rgba(0,0,0, .10);
+  --badge-outline: rgba(0,0,0, .05);
 
   /* Automatic computation of border around primary / danger buttons */
-  --opaque-button-border-intensity: 9;  /* In terms of percentages */
+  --opaque-button-border-intensity: -8;  /* In terms of percentages */
 
   /* Backgrounds applied on top of other backgrounds when hovered/active */
+  --elevate-1: rgba(0,0,0, .03);
+  --elevate-2: rgba(0,0,0, .08);
+
+  /* Core Colors - Light Mode */
+  --bg: #FFFFFF;
+  --surface: #F7FAFC;
+  --primary: #0EA5E9;
+  --primary-foreground: #FFFFFF;
+  --accent: #7C3AED;
+  --accent-foreground: #FFFFFF;
+  --success: #059669;
+  --warning: #D97706;
+  --error: #DC2626;
+  --text: #1E293B;
+  --text-muted: #475569;
+  --border-color: #E2E8F0;
+
+  /* Shadcn compatibility - Light Mode */
+  --background: 0 0% 100%;      /* #FFFFFF */
+  --foreground: 215 25% 17%;    /* #1E293B */
+  --border: 214 32% 91%;        /* #E2E8F0 */
+  --input: 214 32% 91%;         /* #E2E8F0 */
+  
+  --card: 210 40% 98%;          /* #F7FAFC */
+  --card-foreground: 215 25% 17%;
+  --card-border: 214 32% 91%;
+  
+  --popover: 210 40% 98%;
+  --popover-foreground: 215 25% 17%;
+  --popover-border: 214 32% 91%;
+  
+  --primary: 199 89% 48%;       /* #0EA5E9 */
+  --primary-foreground: 0 0% 100%;
+  
+  --secondary: 214 32% 91%;
+  --secondary-foreground: 215 25% 17%;
+  
+  --muted: 214 32% 91%;
+  --muted-foreground: 215 20% 37%; /* #475569 */
+  
+  --accent: 258 90% 66%;        /* #7C3AED */
+  --accent-foreground: 0 0% 100%;
+  
+  --destructive: 0 72% 51%;     /* #DC2626 */
+  --destructive-foreground: 0 0% 100%;
+  
+  --ring: 199 89% 48%;
+  
+  /* Chart colors - Light Mode */
+  --chart-1: 160 84% 39%;       /* #059669 - success */
+  --chart-2: 199 89% 48%;       /* #0EA5E9 - primary/cyan */
+  --chart-3: 32 95% 44%;        /* #D97706 - warning/amber */
+  --chart-4: 258 90% 66%;       /* #7C3AED - accent/violet */
+  --chart-5: 0 72% 51%;         /* #DC2626 - error/rose */
+
+  /* Sidebar - Light Mode */
+  --sidebar: 210 40% 98%;
+  --sidebar-foreground: 215 25% 17%;
+  --sidebar-border: 214 32% 91%;
+  --sidebar-primary: 199 89% 48%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 214 32% 91%;
+  --sidebar-accent-foreground: 215 25% 17%;
+  --sidebar-ring: 199 89% 48%;
+
+  /* Automatically computed borders - Light Mode */
+  --primary-border: #0EA5E9;
+  --secondary-border: #CBD5E1;
+  --muted-border: #E2E8F0;
+  --accent-border: #7C3AED;
+  --destructive-border: #DC2626;
+  --sidebar-primary-border: #0EA5E9;
+  --sidebar-accent-border: #CBD5E1;
+
+  /* Font variables */
+  --font-display: "Space Grotesk", Inter, ui-sans-serif, system-ui;
+  --font-body: Inter, ui-sans-serif, system-ui;
+  --font-heading: "Space Grotesk", Inter, ui-sans-serif, system-ui;
+  
+  /* Gradients - Light Mode */
+  --grad-primary: linear-gradient(135deg, #0EA5E9 0%, #7C3AED 100%);
+  --grad-panic: linear-gradient(135deg, #DC2626 0%, #F87171 100%);
+}
+
+.dark {
+  /* Dark Mode Colors */
+  --button-outline: rgba(255,255,255, .10);
+  --badge-outline: rgba(255,255,255, .05);
+  --opaque-button-border-intensity: 9;
   --elevate-1: rgba(255,255,255, .04);
   --elevate-2: rgba(255,255,255, .09);
 
-  /* Core Colors (converted to HSL where needed for Tailwind) */
+  /* Core Colors - Dark Mode */
   --bg: #0B0F14;
   --surface: #111824;
   --primary: #22D3EE;
@@ -30,13 +119,13 @@
   --text-muted: #9FB0C5;
   --border-color: #1F2A37;
 
-  /* Shadcn compatibility */
-  --background: 210 25% 7%;  /* #0B0F14 */
-  --foreground: 213 30% 91%; /* #E6EDF6 */
-  --border: 215 20% 18%;      /* #1F2A37 */
-  --input: 215 20% 18%;       /* #1F2A37 */
+  /* Shadcn compatibility - Dark Mode */
+  --background: 210 25% 7%;
+  --foreground: 213 30% 91%;
+  --border: 215 20% 18%;
+  --input: 215 20% 18%;
   
-  --card: 216 24% 12%;        /* #111824 */
+  --card: 216 24% 12%;
   --card-foreground: 213 30% 91%;
   --card-border: 215 20% 18%;
   
@@ -44,31 +133,31 @@
   --popover-foreground: 213 30% 91%;
   --popover-border: 215 20% 18%;
   
-  --primary: 187 85% 53%;     /* #22D3EE */
+  --primary: 187 85% 53%;
   --primary-foreground: 210 25% 7%;
   
-  --secondary: 216 25% 23%;   /* #2A3A4B */
+  --secondary: 216 25% 23%;
   --secondary-foreground: 213 30% 91%;
   
   --muted: 215 20% 18%;
-  --muted-foreground: 212 23% 63%; /* #9FB0C5 */
+  --muted-foreground: 212 23% 63%;
   
-  --accent: 253 55% 76%;      /* #A78BFA */
+  --accent: 253 55% 76%;
   --accent-foreground: 210 25% 7%;
   
-  --destructive: 349 89% 60%; /* #F43F5E */
+  --destructive: 349 89% 60%;
   --destructive-foreground: 210 25% 7%;
   
   --ring: 187 85% 53%;
   
-  /* Chart colors */
-  --chart-1: 155 63% 56%;     /* #34D399 - success/mint */
-  --chart-2: 187 85% 53%;     /* #22D3EE - primary/cyan */
-  --chart-3: 38 95% 51%;      /* #F59E0B - warning/amber */
-  --chart-4: 253 55% 76%;     /* #A78BFA - accent/violet */
-  --chart-5: 349 89% 60%;     /* #F43F5E - error/rose */
+  /* Chart colors - Dark Mode */
+  --chart-1: 155 63% 56%;
+  --chart-2: 187 85% 53%;
+  --chart-3: 38 95% 51%;
+  --chart-4: 253 55% 76%;
+  --chart-5: 349 89% 60%;
 
-  /* Sidebar */
+  /* Sidebar - Dark Mode */
   --sidebar: 216 24% 12%;
   --sidebar-foreground: 213 30% 91%;
   --sidebar-border: 215 20% 18%;
@@ -78,7 +167,7 @@
   --sidebar-accent-foreground: 213 30% 91%;
   --sidebar-ring: 187 85% 53%;
 
-  /* Automatically computed borders */
+  /* Automatically computed borders - Dark Mode */
   --primary-border: #22D3EE;
   --secondary-border: #3D4D5E;
   --muted-border: #2A3A4B;
@@ -87,23 +176,9 @@
   --sidebar-primary-border: #22D3EE;
   --sidebar-accent-border: #3D4D5E;
 
-  /* Font variables */
-  --font-display: "Space Grotesk", Inter, ui-sans-serif, system-ui;
-  --font-body: Inter, ui-sans-serif, system-ui;
-  --font-heading: "Space Grotesk", Inter, ui-sans-serif, system-ui;
-  
-  /* Gradients */
+  /* Gradients - Dark Mode */
   --grad-primary: linear-gradient(135deg, #22D3EE 0%, #A78BFA 100%);
   --grad-panic: linear-gradient(135deg, #F43F5E 0%, #FB7185 100%);
-}
-
-.dark {
-  /* Already in dark mode by default */
-  --button-outline: rgba(255,255,255, .10);
-  --badge-outline: rgba(255,255,255, .05);
-  --opaque-button-border-intensity: 9;
-  --elevate-1: rgba(255,255,255, .04);
-  --elevate-2: rgba(255,255,255, .09);
 }
 
 @layer base {
@@ -112,8 +187,7 @@
   }
 
   body {
-    @apply font-body antialiased text-text;
-    background-color: #0B0F14;
+    @apply font-body antialiased bg-background text-foreground;
   }
   
   h1, h2, h3, h4, h5, h6 {

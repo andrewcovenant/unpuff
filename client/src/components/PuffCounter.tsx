@@ -39,9 +39,9 @@ export default function PuffCounter({ dailyLimit = 10, onCountChange }: PuffCoun
   const isApproachingLimit = count >= dailyLimit * 0.7 && count <= dailyLimit;
 
   const getCircleColor = () => {
-    if (isOverLimit) return "#F43F5E"; // Red/Error
-    if (isApproachingLimit) return "#F59E0B"; // Amber/Warning
-    return "#34D399"; // Green/Success
+    if (isOverLimit) return "var(--error)"; // Red/Error
+    if (isApproachingLimit) return "var(--warning)"; // Amber/Warning
+    return "var(--success)"; // Green/Success
   };
 
   const getTextColor = () => {
