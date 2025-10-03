@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -79,7 +79,9 @@ export default function PanicSupportModal({ open, onOpenChange }: PanicSupportMo
             </div>
             <div>
               <DialogTitle className="text-xl font-heading">You're Not Alone</DialogTitle>
-              <p className="text-sm text-muted-foreground">Choose the support that feels right for you</p>
+              <DialogDescription className="text-sm text-muted-foreground">
+                Choose the support that feels right for you
+              </DialogDescription>
             </div>
           </div>
         </DialogHeader>
