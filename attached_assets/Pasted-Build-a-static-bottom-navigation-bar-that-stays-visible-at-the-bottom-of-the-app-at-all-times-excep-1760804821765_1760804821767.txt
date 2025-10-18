@@ -1,0 +1,43 @@
+Build a static bottom navigation bar that stays visible at the bottom of the app at all times (except during onboarding or panic mode). The navigation bar has three buttons: Craving Redirect on the left, Panic in the center, and Profile on the right. It should look clean, modern, and feel calm and reassuring, not flashy or gamified. The center button is larger and slightly raised above the bar like a floating bubble or dome.
+
+Left button: Craving Redirect.
+Icon: 🧘 or a simple calm wave symbol.
+Label under it: “redirect.”
+When tapped, navigate to the Craving Redirect screen. That screen will guide the user through short dopamine replacement activities like breathing, short walks, or quick resets. Use subtle vibration feedback on tap.
+
+Center button: Panic.
+This is the main and most visually dominant button.
+Shape: circular, about 40% larger than the other icons.
+It should sit halfway out of the navigation bar (like a floating action button).
+Color: the app’s main accent (aqua, blue, or green).
+It should have a soft shadow or glow effect so it feels slightly alive.
+Idle state: gentle breathing animation — a slow glow in and out every few seconds.
+When tapped, open a full-screen “panic flow” modal that helps the user manage a craving surge. For now, this can be a simple overlay with a calming animation or short breathing task. After finishing, return to the previous screen.
+Play a short haptic pulse when tapped.
+
+Right button: Profile.
+Icon: 👤 or a clean outline of a user.
+Label: “profile.”
+When tapped, navigate to the user’s profile screen. That screen shows their identity statement (“I am someone who…”), their current streak, total money saved, and an option to log in or create an account later through Supabase. Keep the layout minimal and scroll-free.
+
+Navigation bar appearance:
+Background: dark gray or black with slight transparency.
+Height: around 60 pixels on mobile.
+Icons centered vertically, evenly spaced horizontally.
+Active button (current page) glows softly in the accent color.
+Text under icons is small (10–12px) and lowercase.
+All buttons give a gentle haptic click when pressed.
+
+Transitions between screens should be smooth slide animations, under 300 milliseconds. The navigation bar should never disappear except when the panic modal is open. When panic mode opens, the bar hides completely until the user exits it.
+
+Behavior summary:
+• Tapping “redirect” → goes to the Craving Redirect screen.
+• Tapping the big center bubble → opens panic modal.
+• Tapping “profile” → goes to Profile screen.
+• The middle button gently pulses when idle.
+• Each tap gives vibration feedback.
+• The bar stays fixed on Home, Redirect, and Profile screens.
+
+The goal of this navigation bar is to give users constant, simple access to three emotional states of control:
+redirect (prevent craving), panic (handle crisis), and profile (reflect on progress).
+It should look balanced, feel calming, and remind the user at all times that they have control within reach.

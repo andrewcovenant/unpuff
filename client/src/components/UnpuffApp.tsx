@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
 import PuffCounter from './PuffCounter';
-import PanicButton from './PanicButton';
 import ProgressWidget from './ProgressWidget';
 import AchievementCard, { Achievement } from './AchievementCard';
-import PanicSupportModal from './PanicSupportModal';
 import OnboardingFlow from './OnboardingFlow';
 import SettingsModal from './SettingsModal';
 import HistoryChart from './HistoryChart';
@@ -24,7 +22,6 @@ interface UserData {
 
 export default function UnpuffApp() {
   const [isOnboarded, setIsOnboarded] = useState(false);
-  const [showPanicModal, setShowPanicModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [puffCount, setPuffCount] = useState(0);
   const [userData, setUserData] = useState<UserData | null>(null);
@@ -99,6 +96,8 @@ export default function UnpuffApp() {
     setIsOnboarded(true);
     localStorage.setItem('unpuff-userdata', JSON.stringify(data));
     console.log('User onboarding completed:', data);
+    // Dispatch custom event to notify Router component
+    window.dispatchEvent(new Event('onboarding-complete'));
   };
 
   const handleUpdateSettings = (updates: Partial<UserData>) => {
@@ -179,11 +178,6 @@ export default function UnpuffApp() {
             <p className="text-sm sm:text-base text-muted-foreground">
               I am someone who {userData?.identity || "is taking control"}
             </p>
-          </div>
-
-          {/* Panic Button - Always visible */}
-          <div className="flex justify-center">
-            <PanicButton onClick={() => setShowPanicModal(true)} />
           </div>
         </div>
 
@@ -307,12 +301,6 @@ export default function UnpuffApp() {
           </TabsContent>
         </Tabs>
       </main>
-
-      {/* Support Modal */}
-      <PanicSupportModal
-        open={showPanicModal}
-        onOpenChange={setShowPanicModal}
-      />
 
       {/* Settings Modal - temporarily disabled until we update it */}
       {showSettingsModal && (
