@@ -1,6 +1,47 @@
+# Current .gitignore is minimal. Add:
 node_modules
 dist
 .DS_Store
 server/public
 vite.config.ts.*
 *.tar.gz
+
+# Add these:
+.env
+.env.local
+.env.*.local
+*.log
+.local/
+xcuserdata/
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# iOS specific
+ios/App/Pods/
+ios/App/*.xcworkspace/xcuserdata/
+ios/App/*.xcodeproj/xcuserdata/
+ios/App/*.xcodeproj/project.xcworkspace/xcuserdata/
+DerivedData/
+*.moved-aside
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+
+# Android specific
+android/app/release/
+android/app/debug/
+android/.gradle/
+android/local.properties
+android/captures/
+*.apk
+*.aab
+*.jks
+*.keystore
