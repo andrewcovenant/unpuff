@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.quittracker.app',
-  appName: 'QuitTracker',
+  appId: 'com.unpuff.app',
+  appName: 'Unpuff',
   webDir: 'dist/public',
   server: {
     androidScheme: 'https'

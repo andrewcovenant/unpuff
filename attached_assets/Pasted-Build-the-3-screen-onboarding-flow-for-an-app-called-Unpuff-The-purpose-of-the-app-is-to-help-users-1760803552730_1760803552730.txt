@@ -1,0 +1,33 @@
+Build the 3-screen onboarding flow for an app called Unpuff. The purpose of the app is to help users reduce and eventually quit vaping. The onboarding must be fast, emotional, and identity-driven — not clinical or judgmental. It should feel empowering and smooth, designed for a mobile-first experience.
+
+There are only three screens in the onboarding flow. Each screen transitions with a simple slide-left animation. The theme should move from dark to light tones, symbolizing clarity and control. The tone of the copy should be calm, confident, and supportive — never preachy or guilt-inducing.
+
+Screen 1 is called “The Hook.” Its goal is to make the user feel understood and to reframe quitting from something shameful into something empowering. The screen should show three short lines of text, each fading in one after another:
+“You’re not weak.”
+“You’re just wired.”
+“Unpuff helps you take back control — one craving at a time.”
+After the third line appears, a button fades in or slides up with the text “Let’s begin →.” When the user taps it, navigate to the next screen. This screen should feel cinematic but simple — total reading and animation time under five seconds.
+
+Screen 2 is called “Your Pattern.” Its goal is to help the user identify when they are most likely to vape. Display the question “When are you most likely to vape?” and show five tappable options, each with an emoji and short label:
+😤 When I’m stressed
+🕒 Out of routine / bored
+🎉 With friends
+☕ After coffee or meals
+🌙 Late at night
+The user can select one or two options. When they make at least one selection, the “Got it →” button appears. When tapped, save their selections and navigate to the next screen. Selected options should glow slightly or scale up to give instant feedback. This screen should feel clean, intuitive, and take less than ten seconds to complete.
+
+Screen 3 is called “Your Commitment.” Its goal is to anchor the user’s identity and create an immediate sense of control. It has two quick steps.
+Step one: Ask the user to finish the sentence “I am someone who…” and offer three tappable choices:
+“…owns my impulses.”
+“…is taking control.”
+“…breathes freely again.”
+They can tap one or type their own version.
+Step two: After they choose, fade in the next section asking “How many times do you typically vape in a day?” Include a slider that ranges from 0 to 50. As they slide, display the number dynamically. When they stop moving the slider, show a short line of feedback: “Your first mission: stay under [value × 0.8 rounded] puffs today.” Then show a button labeled “Start My Journey.” When pressed, save their identity, triggers, and daily goal locally, then navigate to the home screen.
+
+The entire onboarding flow should finish in under 45 seconds. Do not include any signup, account creation, or long forms. All data (identity, triggers, baseline, goal) should be stored locally on the device. Use subtle animations and gentle haptic or vibration feedback on button presses. Keep transitions under 300 milliseconds and ensure the text is legible and minimal.
+
+The copy should make the user feel capable and in control. Avoid words like “quit,” “dependency,” or “addiction.” Use phrases like “take control,” “one craving at a time,” and “you’ve got this.” Each screen should feel like progress — from darkness to light, confusion to clarity, loss of control to empowerment.
+
+When onboarding is complete, redirect the user to the main home screen where their daily mission is displayed (for example: “Mission: stay under 11 puffs today”). Do not block this with logins or extra screens.
+
+In short: three screens, smooth transitions, strong emotional tone, fast interaction. The goal is to create immediate motivation and ownership without judgment.

@@ -16,14 +16,13 @@ import { Settings, Trophy, BarChart3, Heart, Target } from 'lucide-react';
 import achievementBadges from '@assets/generated_images/Achievement_badge_icons_set_a2728ae6.png';
 
 interface UserData {
-  currentHabit: string;
+  identity: string;
+  triggers: string[];
+  dailyBaseline: number;
   dailyGoal: number;
-  costPerUnit: number;
-  friendEmails: string[];
-  motivation: string;
 }
 
-export default function QuitTrackerApp() {
+export default function UnpuffApp() {
   const [isOnboarded, setIsOnboarded] = useState(false);
   const [showPanicModal, setShowPanicModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
@@ -88,7 +87,7 @@ export default function QuitTrackerApp() {
 
   useEffect(() => {
     // Check if user has completed onboarding
-    const savedUserData = localStorage.getItem('quittracker-userdata');
+    const savedUserData = localStorage.getItem('unpuff-userdata');
     if (savedUserData) {
       setUserData(JSON.parse(savedUserData));
       setIsOnboarded(true);
@@ -98,7 +97,7 @@ export default function QuitTrackerApp() {
   const handleOnboardingComplete = (data: UserData) => {
     setUserData(data);
     setIsOnboarded(true);
-    localStorage.setItem('quittracker-userdata', JSON.stringify(data));
+    localStorage.setItem('unpuff-userdata', JSON.stringify(data));
     console.log('User onboarding completed:', data);
   };
 
@@ -106,7 +105,7 @@ export default function QuitTrackerApp() {
     if (userData) {
       const updatedData = { ...userData, ...updates };
       setUserData(updatedData);
-      localStorage.setItem('quittracker-userdata', JSON.stringify(updatedData));
+      localStorage.setItem('unpuff-userdata', JSON.stringify(updatedData));
       console.log('Settings updated:', updatedData);
     }
   };
@@ -114,10 +113,9 @@ export default function QuitTrackerApp() {
   const handlePuffCountChange = (count: number) => {
     setPuffCount(count);
     
-    // Send notification if over limit
-    if (userData && count > userData.dailyGoal && userData.friendEmails.length > 0) {
-      console.log('User exceeded limit, would notify friends:', userData.friendEmails);
-      // In a real app, this would trigger email notifications
+    // Log when user exceeds their goal
+    if (userData && count > userData.dailyGoal) {
+      console.log('User exceeded their daily goal');
     }
   };
 
@@ -130,7 +128,7 @@ export default function QuitTrackerApp() {
     );
   }
 
-  const todaySavings = userData ? Math.max(0, (userData.dailyGoal - puffCount) * userData.costPerUnit) : 0;
+  const todaysSaved = userData ? Math.max(0, userData.dailyGoal - puffCount) : 0;
   const isOverLimit = userData ? puffCount > userData.dailyGoal : false;
 
   return (
@@ -147,8 +145,8 @@ export default function QuitTrackerApp() {
                 <Target className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
               </div>
               <div className="min-w-0">
-                <h1 className="text-base sm:text-xl font-heading font-bold text-foreground truncate">QuitTracker</h1>
-                <p className="text-xs text-muted-foreground hidden sm:block">Your journey to freedom</p>
+                <h1 className="text-base sm:text-xl font-heading font-bold text-foreground truncate">Unpuff</h1>
+                <p className="text-xs text-muted-foreground hidden sm:block">Take back control</p>
               </div>
             </div>
             
@@ -176,10 +174,10 @@ export default function QuitTrackerApp() {
         <div className="text-center space-y-3 sm:space-y-4">
           <div className="space-y-1 sm:space-y-2">
             <h2 className="text-xl sm:text-2xl font-heading font-bold text-foreground px-2">
-              {userData?.motivation || "You're doing great!"}
+              Mission: Stay under {userData?.dailyGoal || 10} puffs today
             </h2>
             <p className="text-sm sm:text-base text-muted-foreground">
-              Tracking: {userData?.currentHabit || "Your habit"}
+              I am someone who {userData?.identity || "is taking control"}
             </p>
           </div>
 
@@ -198,15 +196,15 @@ export default function QuitTrackerApp() {
         </div>
 
         {/* Alert for over limit */}
-        {isOverLimit && userData?.friendEmails && userData.friendEmails.length > 0 && (
+        {isOverLimit && (
           <Card className="w-full max-w-md mx-auto bg-destructive/5 border-destructive/20">
             <CardContent className="p-3 sm:p-4 text-center">
               <Heart className="h-5 w-5 sm:h-6 sm:w-6 text-destructive mx-auto mb-2" />
               <p className="text-sm font-medium text-destructive">
-                Limit exceeded - your support network has been notified
+                You've exceeded your daily goal
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                {userData.friendEmails.length} {userData.friendEmails.length === 1 ? 'friend' : 'friends'} alerted
+                Take a breath - you've got this
               </p>
             </CardContent>
           </Card>
@@ -235,7 +233,7 @@ export default function QuitTrackerApp() {
               dailyLimit={userData?.dailyGoal || 10}
               streak={streak}
               moneySaved={totalMoneySaved}
-              costPerUnit={userData?.costPerUnit || 1.0}
+              costPerUnit={1.0}
             />
             
             <HistoryChart dailyLimit={userData?.dailyGoal || 10} />
@@ -271,15 +269,15 @@ export default function QuitTrackerApp() {
                   <div className="grid grid-cols-2 gap-3 sm:gap-4 text-center">
                     <div>
                       <div className="text-xl sm:text-2xl font-bold text-chart-1">
-                        ${todaySavings.toFixed(2)}
+                        {todaysSaved}
                       </div>
-                      <p className="text-xs text-muted-foreground">Saved today</p>
+                      <p className="text-xs text-muted-foreground">Puffs saved today</p>
                     </div>
                     <div>
                       <div className="text-xl sm:text-2xl font-bold text-chart-2">
-                        +{Math.max(0, (userData?.dailyGoal || 10) - puffCount)}
+                        {Math.round((todaysSaved / (userData?.dailyBaseline || 15)) * 100)}%
                       </div>
-                      <p className="text-xs text-muted-foreground">Health points</p>
+                      <p className="text-xs text-muted-foreground">Reduction from baseline</p>
                     </div>
                   </div>
                 </CardContent>
@@ -287,25 +285,20 @@ export default function QuitTrackerApp() {
 
               <Card>
                 <CardHeader className="pb-3 sm:pb-4">
-                  <CardTitle className="text-base sm:text-lg font-heading">Your Network</CardTitle>
+                  <CardTitle className="text-base sm:text-lg font-heading">Your Triggers</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {userData?.friendEmails && userData.friendEmails.length > 0 ? (
-                    <div>
-                      <p className="text-sm text-muted-foreground mb-2">
-                        {userData.friendEmails.length} {userData.friendEmails.length === 1 ? 'friend' : 'friends'} supporting you
-                      </p>
-                      <div className="flex flex-wrap gap-1">
-                        {userData.friendEmails.map((email) => (
-                          <Badge key={email} variant="outline" className="text-xs">
-                            {email.split('@')[0]}
-                          </Badge>
-                        ))}
-                      </div>
+                  {userData?.triggers && userData.triggers.length > 0 ? (
+                    <div className="flex flex-wrap gap-2">
+                      {userData.triggers.map((trigger) => (
+                        <Badge key={trigger} variant="outline" className="text-xs">
+                          {trigger}
+                        </Badge>
+                      ))}
                     </div>
                   ) : (
                     <p className="text-sm text-muted-foreground">
-                      No support network set up yet. Consider adding friends for accountability.
+                      No triggers identified yet
                     </p>
                   )}
                 </CardContent>
@@ -321,13 +314,24 @@ export default function QuitTrackerApp() {
         onOpenChange={setShowPanicModal}
       />
 
-      {/* Settings Modal */}
-      <SettingsModal
-        open={showSettingsModal}
-        onOpenChange={setShowSettingsModal}
-        userData={userData || undefined}
-        onUpdateSettings={handleUpdateSettings}
-      />
+      {/* Settings Modal - temporarily disabled until we update it */}
+      {showSettingsModal && (
+        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-6">
+          <Card className="w-full max-w-md">
+            <CardHeader>
+              <CardTitle>Settings</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Settings panel coming soon
+              </p>
+              <Button onClick={() => setShowSettingsModal(false)} data-testid="button-close-settings">
+                Close
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }
