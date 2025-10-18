@@ -55,7 +55,7 @@ function Router() {
   
   const isOnboarding = location === '/' && !isOnboarded;
   const showBottomNav = !isOnboarding && !isPanicOpen;
-  const showPanicModal = !isOnboarded;
+  const showPanicModal = isOnboarded; // Only render panic modal component after onboarding
 
   return (
     <>
