@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { Capacitor } from '@capacitor/core';
+import { StatusBar, Style } from '@capacitor/status-bar';
 import PuffCounter from "./PuffCounter";
 import ProgressWidget from "./ProgressWidget";
 import AchievementCard, { Achievement } from "./AchievementCard";
@@ -10,7 +12,18 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings, Trophy, BarChart3, Heart, Target } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Settings, Trophy, BarChart3, Heart, Target, RotateCcw } from "lucide-react";
 import achievementBadges from "@assets/generated_images/Achievement_badge_icons_set_a2728ae6.png";
 
 interface UserData {
@@ -23,6 +36,7 @@ interface UserData {
 export default function UnpuffApp() {
   const [isOnboarded, setIsOnboarded] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [showResetDialog, setShowResetDialog] = useState(false);
   const [puffCount, setPuffCount] = useState(0);
   const [userData, setUserData] = useState<UserData | null>(null);
   const [streak, setStreak] = useState(3); // todo: remove mock functionality
@@ -118,6 +132,38 @@ export default function UnpuffApp() {
     }
   };
 
+  const handleResetApp = async () => {
+    // Remove localStorage items
+    localStorage.removeItem("unpuff-userdata");
+    localStorage.removeItem("theme");
+
+    // Reset theme to light mode
+    document.documentElement.classList.remove("dark");
+    
+    // Reset StatusBar for Capacitor apps
+    if (Capacitor.isNativePlatform()) {
+      try {
+        await StatusBar.setStyle({ style: Style.Light });
+        await StatusBar.setBackgroundColor({ color: '#FFFFFF' });
+      } catch (error) {
+        console.error('Failed to reset StatusBar theme:', error);
+      }
+    }
+    
+    // Reset component state
+    setIsOnboarded(false);
+    setUserData(null);
+    setPuffCount(0);
+    
+    // Dispatch event to notify Router component
+    window.dispatchEvent(new Event("onboarding-complete"));
+    
+    // Close dialog
+    setShowResetDialog(false);
+    
+    console.log("App state reset - returning to onboarding");
+  };
+
   if (!isOnboarded) {
     return (
       <OnboardingFlow
@@ -155,6 +201,33 @@ export default function UnpuffApp() {
                   Take back control
                 </p>
               </div>
+              <AlertDialog open={showResetDialog} onOpenChange={setShowResetDialog}>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="ml-2"
+                    data-testid="button-reset-app"
+                  >
+                    <RotateCcw className="h-4 w-4" />
+                    <span className="sr-only">Reset app state</span>
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Reset App State</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This will clear all app data including your onboarding preferences and theme settings. You will be returned to the onboarding flow. This action cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleResetApp}>
+                      Reset
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
 
             <div className="flex items-center gap-1 sm:gap-3 flex-shrink-0">
