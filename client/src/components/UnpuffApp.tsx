@@ -1,17 +1,17 @@
-import { useState, useEffect } from 'react';
-import PuffCounter from './PuffCounter';
-import ProgressWidget from './ProgressWidget';
-import AchievementCard, { Achievement } from './AchievementCard';
-import OnboardingFlow from './OnboardingFlow';
-import SettingsModal from './SettingsModal';
-import HistoryChart from './HistoryChart';
-import { ThemeToggle } from './ThemeToggle';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Settings, Trophy, BarChart3, Heart, Target } from 'lucide-react';
-import achievementBadges from '@assets/generated_images/Achievement_badge_icons_set_a2728ae6.png';
+import { useState, useEffect } from "react";
+import PuffCounter from "./PuffCounter";
+import ProgressWidget from "./ProgressWidget";
+import AchievementCard, { Achievement } from "./AchievementCard";
+import OnboardingFlow from "./OnboardingFlow";
+import SettingsModal from "./SettingsModal";
+import HistoryChart from "./HistoryChart";
+import { ThemeToggle } from "./ThemeToggle";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Settings, Trophy, BarChart3, Heart, Target } from "lucide-react";
+import achievementBadges from "@assets/generated_images/Achievement_badge_icons_set_a2728ae6.png";
 
 interface UserData {
   identity: string;
@@ -26,65 +26,65 @@ export default function UnpuffApp() {
   const [puffCount, setPuffCount] = useState(0);
   const [userData, setUserData] = useState<UserData | null>(null);
   const [streak, setStreak] = useState(3); // todo: remove mock functionality
-  const [totalMoneySaved] = useState(45.50); // todo: remove mock functionality
+  const [totalMoneySaved] = useState(45.5); // todo: remove mock functionality
 
   // todo: remove mock functionality
   const achievements: Achievement[] = [
     {
-      id: '1',
-      title: 'First Day',
-      description: 'Successfully tracked your first day',
-      icon: '🎯',
+      id: "1",
+      title: "First Day",
+      description: "Successfully tracked your first day",
+      icon: "🎯",
       unlocked: true,
       progress: 1,
       target: 1,
-      category: 'milestone'
+      category: "milestone",
     },
     {
-      id: '2',
-      title: 'Three Day Hero',
-      description: 'Stayed under your limit for 3 days',
-      icon: '⭐',
+      id: "2",
+      title: "Three Day Hero",
+      description: "Stayed under your limit for 3 days",
+      icon: "⭐",
       unlocked: true,
       progress: 3,
       target: 3,
-      category: 'streak'
+      category: "streak",
     },
     {
-      id: '3',
-      title: 'Week Warrior',
-      description: 'One full week of progress',
-      icon: '🏆',
+      id: "3",
+      title: "Week Warrior",
+      description: "One full week of progress",
+      icon: "🏆",
       unlocked: false,
       progress: 3,
       target: 7,
-      category: 'streak'
+      category: "streak",
     },
     {
-      id: '4',
-      title: 'Money Saver',
-      description: 'Saved your first $50',
-      icon: '💰',
+      id: "4",
+      title: "Money Saver",
+      description: "Saved your first $50",
+      icon: "💰",
       unlocked: false,
-      progress: 45.50,
+      progress: 45.5,
       target: 50,
-      category: 'savings'
+      category: "savings",
     },
     {
-      id: '5',
-      title: 'Health Improver',
-      description: 'Improved your health score by 25 points',
-      icon: '❤️',
+      id: "5",
+      title: "Health Improver",
+      description: "Improved your health score by 25 points",
+      icon: "❤️",
       unlocked: false,
       progress: 18,
       target: 25,
-      category: 'health'
-    }
+      category: "health",
+    },
   ];
 
   useEffect(() => {
     // Check if user has completed onboarding
-    const savedUserData = localStorage.getItem('unpuff-userdata');
+    const savedUserData = localStorage.getItem("unpuff-userdata");
     if (savedUserData) {
       setUserData(JSON.parse(savedUserData));
       setIsOnboarded(true);
@@ -94,27 +94,27 @@ export default function UnpuffApp() {
   const handleOnboardingComplete = (data: UserData) => {
     setUserData(data);
     setIsOnboarded(true);
-    localStorage.setItem('unpuff-userdata', JSON.stringify(data));
-    console.log('User onboarding completed:', data);
+    localStorage.setItem("unpuff-userdata", JSON.stringify(data));
+    console.log("User onboarding completed:", data);
     // Dispatch custom event to notify Router component
-    window.dispatchEvent(new Event('onboarding-complete'));
+    window.dispatchEvent(new Event("onboarding-complete"));
   };
 
   const handleUpdateSettings = (updates: Partial<UserData>) => {
     if (userData) {
       const updatedData = { ...userData, ...updates };
       setUserData(updatedData);
-      localStorage.setItem('unpuff-userdata', JSON.stringify(updatedData));
-      console.log('Settings updated:', updatedData);
+      localStorage.setItem("unpuff-userdata", JSON.stringify(updatedData));
+      console.log("Settings updated:", updatedData);
     }
   };
 
   const handlePuffCountChange = (count: number) => {
     setPuffCount(count);
-    
+
     // Log when user exceeds their goal
     if (userData && count > userData.dailyGoal) {
-      console.log('User exceeded their daily goal');
+      console.log("User exceeded their daily goal");
     }
   };
 
@@ -122,21 +122,30 @@ export default function UnpuffApp() {
     return (
       <OnboardingFlow
         onComplete={handleOnboardingComplete}
-        onClose={() => console.log('Onboarding cancelled')}
+        onClose={() => console.log("Onboarding cancelled")}
       />
     );
   }
 
-  const todaysSaved = userData ? Math.max(0, userData.dailyGoal - puffCount) : 0;
+  const todaysSaved = userData
+    ? Math.max(0, userData.dailyGoal - puffCount)
+    : 0;
   const isOverLimit = userData ? puffCount > userData.dailyGoal : false;
 
   return (
-    <div className="min-h-screen bg-background" style={{ 
-      paddingTop: 'var(--safe-area-inset-top)',
-      paddingBottom: 'var(--safe-area-inset-bottom)'
-    }}>
+    <div
+      className="min-h-screen bg-background"
+      style={{
+        paddingBottom: "var(--safe-area-inset-bottom)",
+      }}
+    >
       {/* Header */}
-      <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-40">
+      <header
+        className="border-b bg-card/50 backdrop-blur-sm sticky z-40"
+        style={{
+          top: "var(--safe-area-inset-top)",
+        }}
+      >
         <div className="w-full px-3 sm:px-4 py-3 sm:py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-3 min-w-0">
@@ -144,19 +153,23 @@ export default function UnpuffApp() {
                 <Target className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
               </div>
               <div className="min-w-0">
-                <h1 className="text-base sm:text-xl font-heading font-bold text-foreground truncate">Unpuff</h1>
-                <p className="text-xs text-muted-foreground hidden sm:block">Take back control</p>
+                <h1 className="text-base sm:text-xl font-heading font-bold text-foreground truncate">
+                  Unpuff
+                </h1>
+                <p className="text-xs text-muted-foreground hidden sm:block">
+                  Take back control
+                </p>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-1 sm:gap-3 flex-shrink-0">
               <Badge variant="outline" className="text-xs px-2">
                 Day {streak}
               </Badge>
               <ThemeToggle />
-              <Button 
-                variant="ghost" 
-                size="icon" 
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={() => setShowSettingsModal(true)}
                 data-testid="button-settings"
               >
@@ -168,7 +181,7 @@ export default function UnpuffApp() {
       </header>
 
       {/* Main Content */}
-      <main className="w-full px-3 sm:px-4 py-4 sm:py-6 space-y-4 sm:space-y-6">
+      <main className="w-full px-3 sm:px-4 py-4 sm:py-6 space-y-4 sm:space-y-6 pt-[calc(var(--safe-area-inset-top)+4.5rem)]">
         {/* Hero Section */}
         <div className="text-center space-y-3 sm:space-y-4">
           <div className="space-y-1 sm:space-y-2">
@@ -207,15 +220,27 @@ export default function UnpuffApp() {
         {/* Tabs for different sections */}
         <Tabs defaultValue="progress" className="w-full">
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="progress" data-testid="tab-progress" className="text-xs sm:text-sm">
+            <TabsTrigger
+              value="progress"
+              data-testid="tab-progress"
+              className="text-xs sm:text-sm"
+            >
               <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
               <span className="hidden sm:inline">Progress</span>
             </TabsTrigger>
-            <TabsTrigger value="achievements" data-testid="tab-achievements" className="text-xs sm:text-sm">
+            <TabsTrigger
+              value="achievements"
+              data-testid="tab-achievements"
+              className="text-xs sm:text-sm"
+            >
               <Trophy className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
               <span className="hidden sm:inline">Achievements</span>
             </TabsTrigger>
-            <TabsTrigger value="insights" data-testid="tab-insights" className="text-xs sm:text-sm">
+            <TabsTrigger
+              value="insights"
+              data-testid="tab-insights"
+              className="text-xs sm:text-sm"
+            >
               <Target className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
               <span className="hidden sm:inline">Insights</span>
             </TabsTrigger>
@@ -229,26 +254,35 @@ export default function UnpuffApp() {
               moneySaved={totalMoneySaved}
               costPerUnit={1.0}
             />
-            
+
             <HistoryChart dailyLimit={userData?.dailyGoal || 10} />
           </TabsContent>
 
-          <TabsContent value="achievements" className="mt-4 sm:mt-6 space-y-3 sm:space-y-4">
+          <TabsContent
+            value="achievements"
+            className="mt-4 sm:mt-6 space-y-3 sm:space-y-4"
+          >
             <div className="text-center mb-4 sm:mb-6">
-              <img 
-                src={achievementBadges} 
+              <img
+                src={achievementBadges}
                 alt="Achievement badges"
                 className="w-24 h-24 sm:w-32 sm:h-32 mx-auto rounded-lg object-contain bg-card p-3 sm:p-4"
               />
-              <h3 className="font-heading font-semibold text-base sm:text-lg mt-3 sm:mt-4">Your Achievements</h3>
+              <h3 className="font-heading font-semibold text-base sm:text-lg mt-3 sm:mt-4">
+                Your Achievements
+              </h3>
               <p className="text-xs sm:text-sm text-muted-foreground">
-                {achievements.filter(a => a.unlocked).length} of {achievements.length} unlocked
+                {achievements.filter((a) => a.unlocked).length} of{" "}
+                {achievements.length} unlocked
               </p>
             </div>
-            
+
             <div className="grid gap-2 sm:gap-3">
               {achievements.map((achievement) => (
-                <AchievementCard key={achievement.id} achievement={achievement} />
+                <AchievementCard
+                  key={achievement.id}
+                  achievement={achievement}
+                />
               ))}
             </div>
           </TabsContent>
@@ -257,7 +291,9 @@ export default function UnpuffApp() {
             <div className="grid gap-3 sm:gap-4">
               <Card>
                 <CardHeader className="pb-3 sm:pb-4">
-                  <CardTitle className="text-base sm:text-lg font-heading">Today's Impact</CardTitle>
+                  <CardTitle className="text-base sm:text-lg font-heading">
+                    Today's Impact
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3 sm:space-y-4">
                   <div className="grid grid-cols-2 gap-3 sm:gap-4 text-center">
@@ -265,13 +301,20 @@ export default function UnpuffApp() {
                       <div className="text-xl sm:text-2xl font-bold text-chart-1">
                         {todaysSaved}
                       </div>
-                      <p className="text-xs text-muted-foreground">Puffs saved today</p>
+                      <p className="text-xs text-muted-foreground">
+                        Puffs saved today
+                      </p>
                     </div>
                     <div>
                       <div className="text-xl sm:text-2xl font-bold text-chart-2">
-                        {Math.round((todaysSaved / (userData?.dailyBaseline || 15)) * 100)}%
+                        {Math.round(
+                          (todaysSaved / (userData?.dailyBaseline || 15)) * 100
+                        )}
+                        %
                       </div>
-                      <p className="text-xs text-muted-foreground">Reduction from baseline</p>
+                      <p className="text-xs text-muted-foreground">
+                        Reduction from baseline
+                      </p>
                     </div>
                   </div>
                 </CardContent>
@@ -279,13 +322,19 @@ export default function UnpuffApp() {
 
               <Card>
                 <CardHeader className="pb-3 sm:pb-4">
-                  <CardTitle className="text-base sm:text-lg font-heading">Your Triggers</CardTitle>
+                  <CardTitle className="text-base sm:text-lg font-heading">
+                    Your Triggers
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   {userData?.triggers && userData.triggers.length > 0 ? (
                     <div className="flex flex-wrap gap-2">
                       {userData.triggers.map((trigger) => (
-                        <Badge key={trigger} variant="outline" className="text-xs">
+                        <Badge
+                          key={trigger}
+                          variant="outline"
+                          className="text-xs"
+                        >
                           {trigger}
                         </Badge>
                       ))}
@@ -313,7 +362,10 @@ export default function UnpuffApp() {
               <p className="text-sm text-muted-foreground">
                 Settings panel coming soon
               </p>
-              <Button onClick={() => setShowSettingsModal(false)} data-testid="button-close-settings">
+              <Button
+                onClick={() => setShowSettingsModal(false)}
+                data-testid="button-close-settings"
+              >
                 Close
               </Button>
             </CardContent>

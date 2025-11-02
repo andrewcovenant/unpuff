@@ -46,7 +46,10 @@ export default function CravingRedirect() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-800 text-white pb-24 px-4 pt-6">
+    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-800 text-white pb-24 px-4" style={{ 
+      paddingTop: 'calc(var(--safe-area-inset-top) + 1.5rem)',
+      paddingBottom: 'calc(6rem + var(--safe-area-inset-bottom))'
+    }}>
       {/* Header */}
       <div className="max-w-2xl mx-auto mb-8">
         <button

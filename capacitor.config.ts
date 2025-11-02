@@ -1,11 +1,15 @@
-import type { CapacitorConfig } from '@capacitor/cli';
+import type { CapacitorConfig } from "@capacitor/cli";
 
 const config: CapacitorConfig = {
-  appId: 'com.unpuff.app',
-  appName: 'Unpuff',
-  webDir: 'dist/public',
+  appId: "com.unpuff.app",
+  appName: "Unpuff",
+  webDir: "dist/public",
   server: {
-    androidScheme: 'https'
+    androidScheme: "https",
+    // Enable live reload in development
+    // When running npm run dev, uncomment the url below:
+    // url: 'http://localhost:5000',
+    // For production builds, this should be commented out or removed
   },
   plugins: {
     SplashScreen: {
@@ -16,13 +20,13 @@ const config: CapacitorConfig = {
       iosSpinnerStyle: "small",
     },
     StatusBar: {
-      style: 'dark',
-      backgroundColor: "#0B0F14"
+      style: "dark",
+      backgroundColor: "#0B0F14",
     },
     Keyboard: {
-      resize: 'native'
-    }
-  }
+      resize: "native",
+    },
+  },
 };
 
 export default config;
