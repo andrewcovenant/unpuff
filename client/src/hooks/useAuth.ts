@@ -1,11 +1,27 @@
+import { useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { authService, type LoginRequest, type SignupRequest } from "@/services/auth.service";
+import { authService, type LoginRequest, type SignupRequest, type GoogleSignInRequest } from "@/services/auth.service";
 import type { User } from "@shared/schema";
 
 /**
  * Query hook to get current authenticated user session
+ * Also sets up real-time session listener for Supabase auth state changes
  */
 export function useAuth() {
+  const queryClient = useQueryClient();
+
+  // Set up real-time auth state listener
+  useEffect(() => {
+    const { data: { subscription } } = authService.onAuthStateChange((user) => {
+      // Update the query cache when auth state changes
+      queryClient.setQueryData(["auth", "session"], user);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [queryClient]);
+
   return useQuery<User | null>({
     queryKey: ["auth", "session"],
     queryFn: () => authService.getSession(),
@@ -49,6 +65,21 @@ export function useSignup() {
 }
 
 /**
+ * Mutation hook to sign in with Google OAuth
+ */
+export function useGoogleSignIn() {
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error, GoogleSignInRequest | undefined>({
+    mutationFn: (options) => authService.signInWithGoogle(options),
+    onSuccess: () => {
+      // OAuth redirect will happen, so we don't invalidate queries here
+      // The auth state listener will handle the update when user returns
+    },
+  });
+}
+
+/**
  * Mutation hook to logout current user
  */
 export function useLogout() {
@@ -59,8 +90,8 @@ export function useLogout() {
     onSuccess: () => {
       // Clear all queries
       queryClient.clear();
-      // Remove all localStorage items related to auth
-      localStorage.removeItem("unpuff-auth");
+      // Supabase handles session cleanup, but we can clear any local state
+      queryClient.setQueryData(["auth", "session"], null);
     },
   });
 }
