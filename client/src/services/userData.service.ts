@@ -11,6 +11,11 @@ const userDataSchema = z.object({
 
 export type UserData = z.infer<typeof userDataSchema>;
 
+/**
+ * UserDataService manages user-specific data (identity, triggers, goals)
+ * Currently uses localStorage for persistence
+ * TODO: Consider migrating to Supabase database for cross-device sync
+ */
 export class UserDataService {
   /**
    * Get user data from localStorage

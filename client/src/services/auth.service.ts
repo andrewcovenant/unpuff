@@ -1,73 +1,69 @@
-import { apiRequest } from "@/lib/queryClient";
+import { supabase } from "@/lib/supabase";
 import { AuthError, NetworkError } from "./errors";
 import type { User } from "@shared/schema";
 
 export interface LoginRequest {
-  username: string;
+  email: string;
   password: string;
 }
 
 export interface SignupRequest {
-  username: string;
+  email: string;
   password: string;
+  username?: string; // Optional username
 }
 
-const AUTH_STORAGE_KEY = "unpuff-auth";
+export interface GoogleSignInRequest {
+  redirectTo?: string;
+}
 
-interface AuthStorageData {
-  userId: string;
-  username: string;
+/**
+ * Maps Supabase Auth user to our User type
+ */
+function mapSupabaseUserToUser(supabaseUser: any): User {
+  return {
+    id: supabaseUser.id || "",
+    supabase_user_id: supabaseUser.id || "",
+    email: supabaseUser.email || "",
+    username: supabaseUser.user_metadata?.username || supabaseUser.email?.split("@")[0] || null,
+    created_at: supabaseUser.created_at ? new Date(supabaseUser.created_at) : new Date(),
+  };
 }
 
 export class AuthService {
-  private readonly baseURL = "/api/auth";
-
   /**
-   * Login with username and password
-   */
-  async login(credentials: LoginRequest): Promise<User> {
-    try {
-      const response = await apiRequest("POST", `${this.baseURL}/login`, credentials);
-      const user = await response.json();
-
-      // Store auth data in localStorage
-      const authData: AuthStorageData = {
-        userId: user.id,
-        username: user.username,
-      };
-      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(authData));
-
-      return user;
-    } catch (error: any) {
-      if (error instanceof Error && error.message.includes("401")) {
-        throw new AuthError("Invalid username or password", 401);
-      }
-      if (error instanceof Error) {
-        throw new NetworkError(`Failed to login: ${error.message}`, error);
-      }
-      throw new NetworkError("Failed to login", error);
-    }
-  }
-
-  /**
-   * Sign up a new user
+   * Sign up with email and password
    */
   async signup(credentials: SignupRequest): Promise<User> {
     try {
-      const response = await apiRequest("POST", `${this.baseURL}/signup`, credentials);
-      const user = await response.json();
+      const { data, error } = await supabase.auth.signUp({
+        email: credentials.email,
+        password: credentials.password,
+        options: {
+          data: {
+            username: credentials.username || credentials.email.split("@")[0],
+          },
+        },
+      });
 
-      // Store auth data in localStorage
-      const authData: AuthStorageData = {
-        userId: user.id,
-        username: user.username,
-      };
-      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(authData));
+      if (error) {
+        if (error.message.includes("already registered") || error.message.includes("already exists")) {
+          throw new AuthError("Email already registered", 400);
+        }
+        throw new AuthError(error.message || "Failed to sign up", 400);
+      }
 
-      return user;
+      if (!data.user) {
+        throw new AuthError("Failed to create user", 500);
+      }
+
+      // Create user profile in our database
+      // Note: This will be handled by a database trigger or server-side function
+      // For now, we'll return the mapped user
+      return mapSupabaseUserToUser(data.user);
     } catch (error: any) {
-      if (error instanceof Error && error.message.includes("400")) {
-        throw new AuthError("Username already exists or invalid input", 400);
+      if (error instanceof AuthError) {
+        throw error;
       }
       if (error instanceof Error) {
         throw new NetworkError(`Failed to sign up: ${error.message}`, error);
@@ -77,66 +73,161 @@ export class AuthService {
   }
 
   /**
+   * Login with email and password
+   */
+  async login(credentials: LoginRequest): Promise<User> {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: credentials.email,
+        password: credentials.password,
+      });
+
+      if (error) {
+        if (error.message.includes("Invalid login credentials") || error.message.includes("Email not confirmed")) {
+          throw new AuthError("Invalid email or password", 401);
+        }
+        throw new AuthError(error.message || "Failed to login", 401);
+      }
+
+      if (!data.user) {
+        throw new AuthError("Failed to authenticate", 401);
+      }
+
+      return mapSupabaseUserToUser(data.user);
+    } catch (error: any) {
+      if (error instanceof AuthError) {
+        throw error;
+      }
+      if (error instanceof Error) {
+        throw new NetworkError(`Failed to login: ${error.message}`, error);
+      }
+      throw new NetworkError("Failed to login", error);
+    }
+  }
+
+  /**
+   * Sign in with Google OAuth
+   */
+  async signInWithGoogle(options?: GoogleSignInRequest): Promise<void> {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: options?.redirectTo || window.location.origin,
+          queryParams: {
+            access_type: "offline",
+            prompt: "consent",
+          },
+        },
+      });
+
+      if (error) {
+        throw new AuthError(error.message || "Failed to sign in with Google", 500);
+      }
+      // OAuth redirect will happen, so we don't return a user here
+    } catch (error: any) {
+      if (error instanceof AuthError) {
+        throw error;
+      }
+      if (error instanceof Error) {
+        throw new NetworkError(`Failed to sign in with Google: ${error.message}`, error);
+      }
+      throw new NetworkError("Failed to sign in with Google", error);
+    }
+  }
+
+  /**
    * Get current session/user
-   * Note: Currently requires userId from localStorage until server-side sessions are implemented
    */
   async getSession(): Promise<User | null> {
     try {
-      // Get userId from localStorage (temporary until cookie-based sessions)
-      const authDataStr = localStorage.getItem(AUTH_STORAGE_KEY);
-      if (!authDataStr) {
+      const { data: { session }, error } = await supabase.auth.getSession();
+
+      if (error) {
+        console.error("Error getting session:", error);
         return null;
       }
 
-      const authData: AuthStorageData = JSON.parse(authDataStr);
-      if (!authData.userId) {
+      if (!session?.user) {
         return null;
       }
 
-      const response = await fetch(
-        `${this.baseURL}/session?userId=${encodeURIComponent(authData.userId)}`,
-        {
-          credentials: "include",
-        },
-      );
-
-      if (response.status === 401 || response.status === 404) {
-        // Session invalid, clear localStorage
-        localStorage.removeItem(AUTH_STORAGE_KEY);
-        return null;
-      }
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch session: ${response.status}`);
-      }
-
-      return await response.json();
+      return mapSupabaseUserToUser(session.user);
     } catch (error: any) {
-      // If network error, return null (user not authenticated)
-      if (error instanceof Error && error.message.includes("Failed to fetch")) {
+      console.error("Failed to get session:", error);
+      return null;
+    }
+  }
+
+  /**
+   * Get current user (synchronous check)
+   */
+  async getUser(): Promise<User | null> {
+    try {
+      const { data: { user }, error } = await supabase.auth.getUser();
+
+      if (error || !user) {
         return null;
       }
-      // For other errors, clear auth and return null
-      localStorage.removeItem(AUTH_STORAGE_KEY);
+
+      return mapSupabaseUserToUser(user);
+    } catch (error: any) {
+      console.error("Failed to get user:", error);
       return null;
     }
   }
 
   /**
    * Logout current user
-   * Clears localStorage and invalidates session
    */
   async logout(): Promise<void> {
-    localStorage.removeItem(AUTH_STORAGE_KEY);
-    // TODO: Call logout endpoint when available
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        throw new NetworkError(`Failed to logout: ${error.message}`, error);
+      }
+    } catch (error: any) {
+      if (error instanceof NetworkError) {
+        throw error;
+      }
+      throw new NetworkError("Failed to logout", error);
+    }
   }
 
   /**
-   * Check if user is authenticated (synchronous check of localStorage)
+   * Check if user is authenticated (synchronous check)
+   * Note: This is a best-effort check. Use getSession() for accurate authentication status.
    */
   isAuthenticated(): boolean {
-    const authData = localStorage.getItem(AUTH_STORAGE_KEY);
-    return !!authData;
+    // Check if Supabase session exists in localStorage
+    // Supabase stores session as: sb-{project-ref}-auth-token
+    try {
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      if (!supabaseUrl) return false;
+      
+      // Extract project ref from URL (e.g., https://xyz.supabase.co -> xyz)
+      const projectRef = supabaseUrl.match(/https?:\/\/([^.]+)\.supabase\.co/)?.[1];
+      if (!projectRef) return false;
+      
+      const sessionKey = `sb-${projectRef}-auth-token`;
+      return !!localStorage.getItem(sessionKey);
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Listen to auth state changes
+   */
+  onAuthStateChange(callback: (user: User | null) => void) {
+    return supabase.auth.onAuthStateChange(async (event, session) => {
+      if (session?.user) {
+        const user = mapSupabaseUserToUser(session.user);
+        callback(user);
+      } else {
+        callback(null);
+      }
+    });
   }
 }
 
