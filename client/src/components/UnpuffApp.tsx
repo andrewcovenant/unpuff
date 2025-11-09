@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Capacitor } from '@capacitor/core';
 import { StatusBar, Style } from '@capacitor/status-bar';
 import PuffCounter from "./PuffCounter";
@@ -25,22 +25,22 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Settings, Trophy, BarChart3, Heart, Target, RotateCcw } from "lucide-react";
 import achievementBadges from "@assets/generated_images/Achievement_badge_icons_set_a2728ae6.png";
-
-interface UserData {
-  identity: string;
-  triggers: string[];
-  dailyBaseline: number;
-  dailyGoal: number;
-}
+import { useUserData, useUpdateUserData, useClearUserData } from "@/hooks/useUserData";
+import type { UserData } from "@/services/userData.service";
 
 export default function UnpuffApp() {
-  const [isOnboarded, setIsOnboarded] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showResetDialog, setShowResetDialog] = useState(false);
   const [puffCount, setPuffCount] = useState(0);
-  const [userData, setUserData] = useState<UserData | null>(null);
   const [streak, setStreak] = useState(3); // todo: remove mock functionality
   const [totalMoneySaved] = useState(45.5); // todo: remove mock functionality
+
+  // Use React Query hooks for user data
+  const { data: userData, isLoading } = useUserData();
+  const updateUserDataMutation = useUpdateUserData();
+  const clearUserDataMutation = useClearUserData();
+
+  const isOnboarded = !!userData;
 
   // todo: remove mock functionality
   const achievements: Achievement[] = [
@@ -96,29 +96,15 @@ export default function UnpuffApp() {
     },
   ];
 
-  useEffect(() => {
-    // Check if user has completed onboarding
-    const savedUserData = localStorage.getItem("unpuff-userdata");
-    if (savedUserData) {
-      setUserData(JSON.parse(savedUserData));
-      setIsOnboarded(true);
-    }
-  }, []);
-
   const handleOnboardingComplete = (data: UserData) => {
-    setUserData(data);
-    setIsOnboarded(true);
-    localStorage.setItem("unpuff-userdata", JSON.stringify(data));
+    updateUserDataMutation.mutate(data);
     console.log("User onboarding completed:", data);
-    // Dispatch custom event to notify Router component
-    window.dispatchEvent(new Event("onboarding-complete"));
   };
 
   const handleUpdateSettings = (updates: Partial<UserData>) => {
     if (userData) {
       const updatedData = { ...userData, ...updates };
-      setUserData(updatedData);
-      localStorage.setItem("unpuff-userdata", JSON.stringify(updatedData));
+      updateUserDataMutation.mutate(updatedData);
       console.log("Settings updated:", updatedData);
     }
   };
@@ -133,8 +119,10 @@ export default function UnpuffApp() {
   };
 
   const handleResetApp = async () => {
-    // Remove localStorage items
-    localStorage.removeItem("unpuff-userdata");
+    // Clear user data using service
+    clearUserDataMutation.mutate();
+    
+    // Remove theme from localStorage
     localStorage.removeItem("theme");
 
     // Reset theme to light mode
@@ -151,18 +139,17 @@ export default function UnpuffApp() {
     }
     
     // Reset component state
-    setIsOnboarded(false);
-    setUserData(null);
     setPuffCount(0);
-    
-    // Dispatch event to notify Router component
-    window.dispatchEvent(new Event("onboarding-complete"));
     
     // Close dialog
     setShowResetDialog(false);
     
     console.log("App state reset - returning to onboarding");
   };
+
+  if (isLoading) {
+    return null; // Or a loading spinner
+  }
 
   if (!isOnboarded) {
     return (

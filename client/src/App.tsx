@@ -15,38 +15,26 @@ import { StatusBar, Style } from "@capacitor/status-bar";
 import { SplashScreen } from "@capacitor/splash-screen";
 import { Keyboard } from "@capacitor/keyboard";
 import { Capacitor } from "@capacitor/core";
+import { useAuth } from "@/hooks/useAuth";
+import { useUserData } from "@/hooks/useUserData";
+import { useQueryClient } from "@tanstack/react-query";
 
 function Router() {
   const [location] = useLocation();
   const [isPanicOpen, setIsPanicOpen] = useState(false);
-  const [isOnboarded, setIsOnboarded] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const queryClient = useQueryClient();
+  
+  // Use React Query hooks for auth and user data
+  const { data: user, isLoading: authLoading } = useAuth();
+  const { data: userData, isLoading: userDataLoading } = useUserData();
 
-  // Check auth status on mount and when location changes
-  useEffect(() => {
-    const checkAuth = () => {
-      const authData = localStorage.getItem("unpuff-auth");
-      setIsAuthenticated(!!authData);
-    };
+  const isAuthenticated = !!user;
+  const isOnboarded = !!userData;
 
-    checkAuth();
-  }, [location]);
-
-  // Check onboarding status on mount and when location changes
-  useEffect(() => {
-    const checkOnboarding = () => {
-      const userData = localStorage.getItem("unpuff-userdata");
-      setIsOnboarded(!!userData);
-    };
-
-    checkOnboarding();
-  }, [location]);
-
-  // Listen for auth completion
+  // Listen for auth completion events (for backward compatibility)
   useEffect(() => {
     const handleAuthComplete = () => {
-      const authData = localStorage.getItem("unpuff-auth");
-      setIsAuthenticated(!!authData);
+      queryClient.invalidateQueries({ queryKey: ["auth"] });
     };
 
     window.addEventListener("auth-complete", handleAuthComplete);
@@ -54,44 +42,36 @@ function Router() {
     return () => {
       window.removeEventListener("auth-complete", handleAuthComplete);
     };
-  }, []);
+  }, [queryClient]);
 
-  // Listen for storage changes (onboarding completion)
+  // Listen for onboarding completion events (for backward compatibility)
   useEffect(() => {
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === "unpuff-userdata" && e.newValue) {
-        setIsOnboarded(true);
-      }
-      if (e.key === "unpuff-auth" && e.newValue) {
-        setIsAuthenticated(true);
-      }
+    const handleOnboardingComplete = () => {
+      queryClient.invalidateQueries({ queryKey: ["userData"] });
     };
 
-    // Custom event for same-window storage changes
-    const handleCustomStorage = () => {
-      const userData = localStorage.getItem("unpuff-userdata");
-      setIsOnboarded(!!userData);
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-    window.addEventListener("onboarding-complete", handleCustomStorage);
+    window.addEventListener("onboarding-complete", handleOnboardingComplete);
 
     return () => {
-      window.removeEventListener("storage", handleStorageChange);
-      window.removeEventListener("onboarding-complete", handleCustomStorage);
+      window.removeEventListener("onboarding-complete", handleOnboardingComplete);
     };
-  }, []);
+  }, [queryClient]);
 
   const isOnboarding = location === "/" && !isOnboarded;
   const showBottomNav = !isOnboarding && !isPanicOpen && isAuthenticated;
   const showPanicModal = isOnboarded && isAuthenticated; // Only render panic modal component after onboarding and auth
+
+  // Show loading state while checking auth
+  if (authLoading || userDataLoading) {
+    return null; // Or a loading spinner
+  }
 
   // Show auth screen if not authenticated
   if (!isAuthenticated) {
     return (
       <AuthScreen
         onAuthSuccess={() => {
-          setIsAuthenticated(true);
+          queryClient.invalidateQueries({ queryKey: ["auth"] });
         }}
       />
     );

@@ -6,7 +6,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { motion } from 'framer-motion';
 import { Capacitor } from '@capacitor/core';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
-import { apiRequest } from '@/lib/queryClient';
+import { useLogin, useSignup } from '@/hooks/useAuth';
+import { AuthError, NetworkError } from '@/services/errors';
 
 interface AuthScreenProps {
   onAuthSuccess: () => void;
@@ -14,7 +15,6 @@ interface AuthScreenProps {
 
 export default function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
   const [activeTab, setActiveTab] = useState<'signin' | 'signup'>('signin');
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Sign in form state
@@ -25,6 +25,12 @@ export default function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
   const [signUpUsername, setSignUpUsername] = useState('');
   const [signUpPassword, setSignUpPassword] = useState('');
   const [signUpConfirmPassword, setSignUpConfirmPassword] = useState('');
+
+  // React Query mutation hooks
+  const loginMutation = useLogin();
+  const signupMutation = useSignup();
+
+  const loading = loginMutation.isPending || signupMutation.isPending;
 
   const triggerHaptic = async (style: ImpactStyle = ImpactStyle.Light) => {
     if (Capacitor.isNativePlatform()) {
@@ -51,133 +57,84 @@ export default function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    setLoading(true);
 
     if (!signInUsername.trim() || !signInPassword.trim()) {
       setError('Please enter both username and password');
-      setLoading(false);
       return;
     }
 
     try {
       await triggerHaptic(ImpactStyle.Medium);
-      const response = await apiRequest('POST', '/api/auth/login', {
+      await loginMutation.mutateAsync({
         username: signInUsername.trim(),
         password: signInPassword,
       });
 
-      const user = await response.json();
-      
-      // Store auth data in localStorage
-      localStorage.setItem('unpuff-auth', JSON.stringify({
-        userId: user.id,
-        username: user.username,
-      }));
-
-      // Dispatch event to notify Router
-      window.dispatchEvent(new Event('auth-complete'));
-      
-      // Call success callback
+      // Call success callback (mutation hook handles cache invalidation and events)
       onAuthSuccess();
     } catch (error: any) {
       await triggerHaptic(ImpactStyle.Heavy);
       let message = 'Failed to sign in. Please try again.';
       
-      // Try to parse error message from response
-      if (error.message) {
-        const errorParts = error.message.split(': ');
-        if (errorParts.length > 1) {
-          try {
-            const errorJson = JSON.parse(errorParts[1]);
-            message = errorJson.message || message;
-          } catch {
-            // If not JSON, use the error message as-is but clean it up
-            message = errorParts[1] || errorParts[0] || message;
-          }
-        } else {
-          message = error.message;
-        }
+      if (error instanceof AuthError) {
+        message = error.message;
+      } else if (error instanceof NetworkError) {
+        message = error.message;
+      } else if (error?.message) {
+        message = error.message;
       }
       
       setError(message);
-    } finally {
-      setLoading(false);
     }
   };
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    setLoading(true);
 
     // Validate inputs
     if (!signUpUsername.trim() || !signUpPassword.trim() || !signUpConfirmPassword.trim()) {
       setError('Please fill in all fields');
-      setLoading(false);
       return;
     }
 
     if (signUpUsername.trim().length < 3) {
       setError('Username must be at least 3 characters');
-      setLoading(false);
       return;
     }
 
     if (signUpPassword.length < 3) {
       setError('Password must be at least 3 characters');
-      setLoading(false);
       return;
     }
 
     if (signUpPassword !== signUpConfirmPassword) {
       setError('Passwords do not match');
-      setLoading(false);
       return;
     }
 
     try {
       await triggerHaptic(ImpactStyle.Medium);
-      const response = await apiRequest('POST', '/api/auth/signup', {
+      await signupMutation.mutateAsync({
         username: signUpUsername.trim(),
         password: signUpPassword,
       });
 
-      const user = await response.json();
-      
-      // Store auth data in localStorage
-      localStorage.setItem('unpuff-auth', JSON.stringify({
-        userId: user.id,
-        username: user.username,
-      }));
-
-      // Dispatch event to notify Router
-      window.dispatchEvent(new Event('auth-complete'));
-      
-      // Call success callback
+      // Call success callback (mutation hook handles cache invalidation and events)
       onAuthSuccess();
     } catch (error: any) {
       await triggerHaptic(ImpactStyle.Heavy);
       let message = 'Failed to create account. Please try again.';
       
-      // Try to parse error message from response
-      if (error.message) {
-        const errorParts = error.message.split(': ');
-        if (errorParts.length > 1) {
-          try {
-            const errorJson = JSON.parse(errorParts[1]);
-            message = errorJson.message || message;
-          } catch {
-            // If not JSON, use the error message as-is but clean it up
-            message = errorParts[1] || errorParts[0] || message;
-          }
-        } else {
-          message = error.message;
-        }
+      if (error instanceof AuthError) {
+        message = error.message;
+      } else if (error instanceof NetworkError) {
+        message = error.message;
+      } else if (error?.message) {
+        message = error.message;
       }
       
       setError(message);
-    } finally {
-      setLoading(false);
     }
   };
 

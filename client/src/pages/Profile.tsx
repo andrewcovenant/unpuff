@@ -4,32 +4,22 @@ import { Card } from '@/components/ui/card';
 import { ArrowLeft, TrendingUp, DollarSign, Calendar } from 'lucide-react';
 import { useLocation } from 'wouter';
 import { ImpactStyle, triggerHaptic } from '@/lib/haptics';
-import { useState, useEffect } from 'react';
-
-interface UserData {
-  identity: string;
-  dailyBaseline: number;
-  dailyGoal: number;
-  triggers: string[];
-}
+import { useUserData } from '@/hooks/useUserData';
 
 export default function Profile() {
   const [, setLocation] = useLocation();
-  const [userData, setUserData] = useState<UserData | null>(null);
+  const { data: userData, isLoading } = useUserData();
   const streak = 3;
   const moneySaved = 45.50;
-
-  useEffect(() => {
-    const savedData = localStorage.getItem('unpuff-userdata');
-    if (savedData) {
-      setUserData(JSON.parse(savedData));
-    }
-  }, []);
 
   const handleBack = async () => {
     await triggerHaptic(ImpactStyle.Light);
     setLocation('/');
   };
+
+  if (isLoading) {
+    return null; // Or a loading spinner
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-800 text-white pb-24 px-4" style={{ 
