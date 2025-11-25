@@ -1,6 +1,14 @@
 import { supabase } from "@/lib/supabase";
+import { Capacitor } from "@capacitor/core";
 import { AuthError, NetworkError } from "./errors";
 import type { User } from "@shared/schema";
+
+// Get the appropriate redirect URL based on platform
+function getAuthCallbackUrl(): string {
+  return Capacitor.isNativePlatform()
+    ? "unpuff://auth/callback"
+    : `${window.location.origin}/auth/callback`;
+}
 
 export interface LoginRequest {
   email: string;
@@ -25,8 +33,13 @@ function mapSupabaseUserToUser(supabaseUser: any): User {
     id: supabaseUser.id || "",
     supabase_user_id: supabaseUser.id || "",
     email: supabaseUser.email || "",
-    username: supabaseUser.user_metadata?.username || supabaseUser.email?.split("@")[0] || null,
-    created_at: supabaseUser.created_at ? new Date(supabaseUser.created_at) : new Date(),
+    username:
+      supabaseUser.user_metadata?.username ||
+      supabaseUser.email?.split("@")[0] ||
+      null,
+    created_at: supabaseUser.created_at
+      ? new Date(supabaseUser.created_at)
+      : new Date(),
   };
 }
 
@@ -40,6 +53,7 @@ export class AuthService {
         email: credentials.email,
         password: credentials.password,
         options: {
+          emailRedirectTo: getAuthCallbackUrl(),
           data: {
             username: credentials.username || credentials.email.split("@")[0],
           },
@@ -47,7 +61,10 @@ export class AuthService {
       });
 
       if (error) {
-        if (error.message.includes("already registered") || error.message.includes("already exists")) {
+        if (
+          error.message.includes("already registered") ||
+          error.message.includes("already exists")
+        ) {
           throw new AuthError("Email already registered", 400);
         }
         throw new AuthError(error.message || "Failed to sign up", 400);
@@ -83,7 +100,13 @@ export class AuthService {
       });
 
       if (error) {
-        if (error.message.includes("Invalid login credentials") || error.message.includes("Email not confirmed")) {
+        if (error.message.includes("Email not confirmed")) {
+          throw new AuthError(
+            "Please confirm your email address before signing in",
+            401
+          );
+        }
+        if (error.message.includes("Invalid login credentials")) {
           throw new AuthError("Invalid email or password", 401);
         }
         throw new AuthError(error.message || "Failed to login", 401);
@@ -113,7 +136,7 @@ export class AuthService {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: options?.redirectTo || window.location.origin,
+          redirectTo: options?.redirectTo || getAuthCallbackUrl(),
           queryParams: {
             access_type: "offline",
             prompt: "consent",
@@ -122,7 +145,10 @@ export class AuthService {
       });
 
       if (error) {
-        throw new AuthError(error.message || "Failed to sign in with Google", 500);
+        throw new AuthError(
+          error.message || "Failed to sign in with Google",
+          500
+        );
       }
       // OAuth redirect will happen, so we don't return a user here
     } catch (error: any) {
@@ -130,7 +156,10 @@ export class AuthService {
         throw error;
       }
       if (error instanceof Error) {
-        throw new NetworkError(`Failed to sign in with Google: ${error.message}`, error);
+        throw new NetworkError(
+          `Failed to sign in with Google: ${error.message}`,
+          error
+        );
       }
       throw new NetworkError("Failed to sign in with Google", error);
     }
@@ -141,7 +170,10 @@ export class AuthService {
    */
   async getSession(): Promise<User | null> {
     try {
-      const { data: { session }, error } = await supabase.auth.getSession();
+      const {
+        data: { session },
+        error,
+      } = await supabase.auth.getSession();
 
       if (error) {
         console.error("Error getting session:", error);
@@ -164,7 +196,10 @@ export class AuthService {
    */
   async getUser(): Promise<User | null> {
     try {
-      const { data: { user }, error } = await supabase.auth.getUser();
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.getUser();
 
       if (error || !user) {
         return null;
@@ -204,11 +239,13 @@ export class AuthService {
     try {
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       if (!supabaseUrl) return false;
-      
+
       // Extract project ref from URL (e.g., https://xyz.supabase.co -> xyz)
-      const projectRef = supabaseUrl.match(/https?:\/\/([^.]+)\.supabase\.co/)?.[1];
+      const projectRef = supabaseUrl.match(
+        /https?:\/\/([^.]+)\.supabase\.co/
+      )?.[1];
       if (!projectRef) return false;
-      
+
       const sessionKey = `sb-${projectRef}-auth-token`;
       return !!localStorage.getItem(sessionKey);
     } catch {
@@ -232,4 +269,3 @@ export class AuthService {
 }
 
 export const authService = new AuthService();
-
