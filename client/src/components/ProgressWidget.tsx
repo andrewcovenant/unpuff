@@ -5,6 +5,7 @@ import { TrendingDown, DollarSign, Calendar, Heart } from 'lucide-react';
 interface ProgressWidgetProps {
   currentCount: number;
   dailyLimit: number;
+  dailyBaseline?: number;
   streak: number;
   moneySaved: number;
   costPerUnit: number;
@@ -12,13 +13,21 @@ interface ProgressWidgetProps {
 
 export default function ProgressWidget({ 
   currentCount, 
-  dailyLimit, 
+  dailyLimit,
+  dailyBaseline = 15,
   streak, 
   moneySaved, 
   costPerUnit 
 }: ProgressWidgetProps) {
-  const todaySavings = Math.max(0, (dailyLimit - currentCount) * costPerUnit);
-  const healthImprovement = Math.max(0, dailyLimit - currentCount);
+  // Savings calculated against baseline (what they used to smoke)
+  const puffsAvoided = Math.max(0, dailyBaseline - currentCount);
+  const todaySavings = puffsAvoided * costPerUnit;
+  
+  // Health points - simple gamification based on avoidance
+  const healthImprovement = puffsAvoided;
+  
+  // Potential savings if they stick to the goal
+  const potentialSavings = (dailyBaseline - dailyLimit) * costPerUnit;
 
   return (
     <div className="grid grid-cols-2 gap-3 sm:gap-4">
@@ -27,16 +36,16 @@ export default function ProgressWidget({
         <CardHeader className="pb-2 sm:pb-3">
           <CardTitle className="text-xs sm:text-sm font-medium flex items-center gap-1 sm:gap-2">
             <TrendingDown className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
-            <span className="hidden sm:inline">Progress Today</span>
-            <span className="sm:hidden">Progress</span>
+            <span className="hidden sm:inline">Avoided Today</span>
+            <span className="sm:hidden">Avoided</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-xl sm:text-2xl font-bold text-foreground">
-            {Math.max(0, dailyLimit - currentCount)}
+            {puffsAvoided}
           </div>
           <p className="text-xs text-muted-foreground mt-1">
-            puffs avoided
+            puffs skipped
           </p>
           {currentCount <= dailyLimit && (
             <Badge variant="outline" className="mt-2 text-xs">
@@ -56,12 +65,25 @@ export default function ProgressWidget({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-xl sm:text-2xl font-bold text-chart-1">
-            ${todaySavings.toFixed(2)}
-          </div>
-          <p className="text-xs text-muted-foreground mt-1">
-            Total: ${moneySaved.toFixed(2)}
-          </p>
+          {todaySavings > 0 ? (
+            <>
+              <div className="text-xl sm:text-2xl font-bold text-chart-1">
+                ${todaySavings.toFixed(2)}
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Total: ${moneySaved.toFixed(2)}
+              </p>
+            </>
+          ) : (
+            <>
+              <div className="text-xl sm:text-2xl font-bold text-muted-foreground">
+                $0.00
+              </div>
+              <p className="text-xs text-chart-1 mt-1 font-medium">
+                Goal: Save ${potentialSavings.toFixed(2)}
+              </p>
+            </>
+          )}
         </CardContent>
       </Card>
 
@@ -96,7 +118,7 @@ export default function ProgressWidget({
             +{healthImprovement}
           </div>
           <p className="text-xs text-muted-foreground mt-1">
-            health points
+            {healthImprovement > 10 ? "Lung recovery" : "points gained"}
           </p>
         </CardContent>
       </Card>

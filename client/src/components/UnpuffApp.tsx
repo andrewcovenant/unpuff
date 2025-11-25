@@ -12,25 +12,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Settings, Trophy, BarChart3, Heart, Target, RotateCcw } from "lucide-react";
+import { Settings, Trophy, BarChart3, Heart, Target } from "lucide-react";
 import achievementBadges from "@assets/generated_images/Achievement_badge_icons_set_a2728ae6.png";
-import { useUserData, useUpdateUserData, useClearUserData } from "@/hooks/useUserData";
+import { useUserData, useUpdateUserData } from "@/hooks/useUserData";
 import type { UserData } from "@/services/userData.service";
 
 export default function UnpuffApp() {
   const [showSettingsModal, setShowSettingsModal] = useState(false);
-  const [showResetDialog, setShowResetDialog] = useState(false);
   const [puffCount, setPuffCount] = useState(0);
   const [streak, setStreak] = useState(3); // todo: remove mock functionality
   const [totalMoneySaved] = useState(45.5); // todo: remove mock functionality
@@ -38,7 +26,6 @@ export default function UnpuffApp() {
   // Use React Query hooks for user data
   const { data: userData, isLoading } = useUserData();
   const updateUserDataMutation = useUpdateUserData();
-  const clearUserDataMutation = useClearUserData();
 
   const isOnboarded = !!userData;
 
@@ -101,14 +88,6 @@ export default function UnpuffApp() {
     console.log("User onboarding completed:", data);
   };
 
-  const handleUpdateSettings = (updates: Partial<UserData>) => {
-    if (userData) {
-      const updatedData = { ...userData, ...updates };
-      updateUserDataMutation.mutate(updatedData);
-      console.log("Settings updated:", updatedData);
-    }
-  };
-
   const handlePuffCountChange = (count: number) => {
     setPuffCount(count);
 
@@ -116,35 +95,6 @@ export default function UnpuffApp() {
     if (userData && count > userData.dailyGoal) {
       console.log("User exceeded their daily goal");
     }
-  };
-
-  const handleResetApp = async () => {
-    // Clear user data using service
-    clearUserDataMutation.mutate();
-    
-    // Remove theme from localStorage
-    localStorage.removeItem("theme");
-
-    // Reset theme to light mode
-    document.documentElement.classList.remove("dark");
-    
-    // Reset StatusBar for Capacitor apps
-    if (Capacitor.isNativePlatform()) {
-      try {
-        await StatusBar.setStyle({ style: Style.Light });
-        await StatusBar.setBackgroundColor({ color: '#FFFFFF' });
-      } catch (error) {
-        console.error('Failed to reset StatusBar theme:', error);
-      }
-    }
-    
-    // Reset component state
-    setPuffCount(0);
-    
-    // Close dialog
-    setShowResetDialog(false);
-    
-    console.log("App state reset - returning to onboarding");
   };
 
   if (isLoading) {
@@ -188,33 +138,6 @@ export default function UnpuffApp() {
                   Take back control
                 </p>
               </div>
-              <AlertDialog open={showResetDialog} onOpenChange={setShowResetDialog}>
-                <AlertDialogTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="ml-2"
-                    data-testid="button-reset-app"
-                  >
-                    <RotateCcw className="h-4 w-4" />
-                    <span className="sr-only">Reset app state</span>
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Reset App State</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This will clear all app data including your onboarding preferences and theme settings. You will be returned to the onboarding flow. This action cannot be undone.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleResetApp}>
-                      Reset
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
             </div>
 
             <div className="flex items-center gap-1 sm:gap-3 flex-shrink-0">
@@ -238,13 +161,13 @@ export default function UnpuffApp() {
       {/* Main Content */}
       <main className="w-full px-3 sm:px-4 py-4 sm:py-6 space-y-4 sm:space-y-6 pt-[calc(var(--safe-area-inset-top)+4.5rem)]">
         {/* Hero Section */}
-        <div className="text-center space-y-3 sm:space-y-4">
-          <div className="space-y-1 sm:space-y-2">
-            <h2 className="text-xl sm:text-2xl font-heading font-bold text-foreground px-2">
-              Mission: Stay under {userData?.dailyGoal || 10} puffs today
+        <div className="text-center space-y-2">
+          <div className="space-y-1">
+            <h2 className="text-lg sm:text-xl font-medium text-muted-foreground px-2">
+              Goal: Stay under {userData?.dailyGoal || 10} puffs
             </h2>
-            <p className="text-sm sm:text-base text-muted-foreground">
-              I am someone who {userData?.identity || "is taking control"}
+            <p className="text-sm text-muted-foreground/60 italic">
+              "I am someone who {userData?.identity || "is taking control"}"
             </p>
           </div>
         </div>
@@ -280,24 +203,24 @@ export default function UnpuffApp() {
               data-testid="tab-progress"
               className="text-xs sm:text-sm"
             >
-              <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
-              <span className="hidden sm:inline">Progress</span>
+              <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+              <span>Progress</span>
             </TabsTrigger>
             <TabsTrigger
               value="achievements"
               data-testid="tab-achievements"
               className="text-xs sm:text-sm"
             >
-              <Trophy className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
-              <span className="hidden sm:inline">Achievements</span>
+              <Trophy className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+              <span>Awards</span>
             </TabsTrigger>
             <TabsTrigger
               value="insights"
               data-testid="tab-insights"
               className="text-xs sm:text-sm"
             >
-              <Target className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
-              <span className="hidden sm:inline">Insights</span>
+              <Target className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+              <span>Insights</span>
             </TabsTrigger>
           </TabsList>
 
@@ -305,6 +228,7 @@ export default function UnpuffApp() {
             <ProgressWidget
               currentCount={puffCount}
               dailyLimit={userData?.dailyGoal || 10}
+              dailyBaseline={userData?.dailyBaseline || 15}
               streak={streak}
               moneySaved={totalMoneySaved}
               costPerUnit={1.0}
