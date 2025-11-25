@@ -14,9 +14,10 @@ if (!supabaseUrl || !supabaseAnonKey) {
 const supabaseOptions = {
   auth: {
     // For Capacitor apps, use a custom URL scheme for OAuth redirects
+    // For web, redirect to /auth/callback to handle email verification
     redirectTo: Capacitor.isNativePlatform()
       ? "unpuff://auth/callback"
-      : window.location.origin,
+      : `${window.location.origin}/auth/callback`,
     // Enable automatic session refresh
     autoRefreshToken: true,
     // Persist session in localStorage

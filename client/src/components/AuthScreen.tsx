@@ -1,45 +1,51 @@
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { motion } from 'framer-motion';
-import { Capacitor } from '@capacitor/core';
-import { Haptics, ImpactStyle } from '@capacitor/haptics';
-import { useLogin, useSignup, useGoogleSignIn } from '@/hooks/useAuth';
-import { AuthError, NetworkError } from '@/services/errors';
-import { supabase } from '@/lib/supabase';
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { motion } from "framer-motion";
+import { Capacitor } from "@capacitor/core";
+import { Haptics, ImpactStyle } from "@capacitor/haptics";
+import { useLogin, useSignup, useGoogleSignIn } from "@/hooks/useAuth";
+import { AuthError, NetworkError } from "@/services/errors";
+import { supabase } from "@/lib/supabase";
 
 interface AuthScreenProps {
   onAuthSuccess: () => void;
 }
 
 export default function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
-  const [activeTab, setActiveTab] = useState<'signin' | 'signup'>('signin');
+  const [activeTab, setActiveTab] = useState<"signin" | "signup">("signin");
   const [error, setError] = useState<string | null>(null);
+  const [showConfirmationBanner, setShowConfirmationBanner] = useState(false);
 
   // Sign in form state
-  const [signInEmail, setSignInEmail] = useState('');
-  const [signInPassword, setSignInPassword] = useState('');
+  const [signInEmail, setSignInEmail] = useState("");
+  const [signInPassword, setSignInPassword] = useState("");
 
   // Sign up form state
-  const [signUpEmail, setSignUpEmail] = useState('');
-  const [signUpUsername, setSignUpUsername] = useState('');
-  const [signUpPassword, setSignUpPassword] = useState('');
-  const [signUpConfirmPassword, setSignUpConfirmPassword] = useState('');
+  const [signUpEmail, setSignUpEmail] = useState("");
+  const [signUpUsername, setSignUpUsername] = useState("");
+  const [signUpPassword, setSignUpPassword] = useState("");
+  const [signUpConfirmPassword, setSignUpConfirmPassword] = useState("");
 
   // React Query mutation hooks
   const loginMutation = useLogin();
   const signupMutation = useSignup();
   const googleSignInMutation = useGoogleSignIn();
 
-  const loading = loginMutation.isPending || signupMutation.isPending || googleSignInMutation.isPending;
+  const loading =
+    loginMutation.isPending ||
+    signupMutation.isPending ||
+    googleSignInMutation.isPending;
 
   // Handle OAuth callback
   useEffect(() => {
     const handleOAuthCallback = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (session) {
         onAuthSuccess();
       }
@@ -53,22 +59,26 @@ export default function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
       try {
         await Haptics.impact({ style });
       } catch (error) {
-        console.error('Haptic feedback failed:', error);
+        console.error("Haptic feedback failed:", error);
       }
     }
   };
 
   const handleTabChange = async (value: string) => {
     await triggerHaptic(ImpactStyle.Light);
-    setActiveTab(value as 'signin' | 'signup');
+    setActiveTab(value as "signin" | "signup");
     setError(null);
+    // Don't clear the confirmation banner when switching to signin after signup
+    if (value === "signup") {
+      setShowConfirmationBanner(false);
+    }
     // Clear forms when switching tabs
-    setSignInEmail('');
-    setSignInPassword('');
-    setSignUpEmail('');
-    setSignUpUsername('');
-    setSignUpPassword('');
-    setSignUpConfirmPassword('');
+    setSignInEmail("");
+    setSignInPassword("");
+    setSignUpEmail("");
+    setSignUpUsername("");
+    setSignUpPassword("");
+    setSignUpConfirmPassword("");
   };
 
   const handleSignIn = async (e: React.FormEvent) => {
@@ -76,14 +86,14 @@ export default function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
     setError(null);
 
     if (!signInEmail.trim() || !signInPassword.trim()) {
-      setError('Please enter both email and password');
+      setError("Please enter both email and password");
       return;
     }
 
     // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(signInEmail.trim())) {
-      setError('Please enter a valid email address');
+      setError("Please enter a valid email address");
       return;
     }
 
@@ -98,8 +108,8 @@ export default function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
       onAuthSuccess();
     } catch (error: any) {
       await triggerHaptic(ImpactStyle.Heavy);
-      let message = 'Failed to sign in. Please try again.';
-      
+      let message = "Failed to sign in. Please try again.";
+
       if (error instanceof AuthError) {
         message = error.message;
       } else if (error instanceof NetworkError) {
@@ -107,7 +117,7 @@ export default function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
       } else if (error?.message) {
         message = error.message;
       }
-      
+
       setError(message);
     }
   };
@@ -116,12 +126,12 @@ export default function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
     setError(null);
     try {
       await triggerHaptic(ImpactStyle.Medium);
-      await googleSignInMutation.mutateAsync();
+      await googleSignInMutation.mutateAsync(undefined);
       // OAuth redirect will happen, user will be redirected back after authentication
     } catch (error: any) {
       await triggerHaptic(ImpactStyle.Heavy);
-      let message = 'Failed to sign in with Google. Please try again.';
-      
+      let message = "Failed to sign in with Google. Please try again.";
+
       if (error instanceof AuthError) {
         message = error.message;
       } else if (error instanceof NetworkError) {
@@ -129,7 +139,7 @@ export default function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
       } else if (error?.message) {
         message = error.message;
       }
-      
+
       setError(message);
     }
   };
@@ -139,25 +149,29 @@ export default function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
     setError(null);
 
     // Validate inputs
-    if (!signUpEmail.trim() || !signUpPassword.trim() || !signUpConfirmPassword.trim()) {
-      setError('Please fill in all required fields');
+    if (
+      !signUpEmail.trim() ||
+      !signUpPassword.trim() ||
+      !signUpConfirmPassword.trim()
+    ) {
+      setError("Please fill in all required fields");
       return;
     }
 
     // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(signUpEmail.trim())) {
-      setError('Please enter a valid email address');
+      setError("Please enter a valid email address");
       return;
     }
 
     if (signUpPassword.length < 6) {
-      setError('Password must be at least 6 characters');
+      setError("Password must be at least 6 characters");
       return;
     }
 
     if (signUpPassword !== signUpConfirmPassword) {
-      setError('Passwords do not match');
+      setError("Passwords do not match");
       return;
     }
 
@@ -169,12 +183,19 @@ export default function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
         username: signUpUsername.trim() || undefined,
       });
 
-      // Call success callback (mutation hook handles cache invalidation and events)
-      onAuthSuccess();
+      // Show confirmation banner and switch to sign-in tab
+      // User needs to confirm their email before they can sign in
+      setShowConfirmationBanner(true);
+      setActiveTab("signin");
+      // Clear the sign-up form
+      setSignUpEmail("");
+      setSignUpUsername("");
+      setSignUpPassword("");
+      setSignUpConfirmPassword("");
     } catch (error: any) {
       await triggerHaptic(ImpactStyle.Heavy);
-      let message = 'Failed to create account. Please try again.';
-      
+      let message = "Failed to create account. Please try again.";
+
       if (error instanceof AuthError) {
         message = error.message;
       } else if (error instanceof NetworkError) {
@@ -182,7 +203,7 @@ export default function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
       } else if (error?.message) {
         message = error.message;
       }
-      
+
       setError(message);
     }
   };
@@ -206,7 +227,11 @@ export default function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
               </p>
             </div>
 
-            <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
+            <Tabs
+              value={activeTab}
+              onValueChange={handleTabChange}
+              className="w-full"
+            >
               <TabsList className="grid w-full grid-cols-2 bg-slate-900/50 mb-6">
                 <TabsTrigger
                   value="signin"
@@ -222,7 +247,65 @@ export default function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="signin" className="space-y-4 mt-6">
+              {/* Email confirmation banner */}
+              {showConfirmationBanner && activeTab === "signin" && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mb-4 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-lg relative"
+                >
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmationBanner(false)}
+                    className="absolute top-2 right-2 text-emerald-400 hover:text-emerald-300 p-1"
+                    aria-label="Dismiss"
+                  >
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                  <div className="flex items-start gap-3 pr-6">
+                    <svg
+                      className="w-5 h-5 text-emerald-400 mt-0.5 flex-shrink-0"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                      />
+                    </svg>
+                    <div>
+                      <p className="text-sm font-medium text-emerald-400">
+                        Please confirm your email address
+                      </p>
+                      <p className="text-xs text-emerald-400/70 mt-1">
+                        Check your inbox for a confirmation link, then sign in.
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              <TabsContent
+                value="signin"
+                className={`space-y-4 ${
+                  showConfirmationBanner ? "mt-0" : "mt-6"
+                }`}
+              >
                 {/* Google Sign In Button */}
                 <Button
                   type="button"
@@ -250,7 +333,7 @@ export default function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
                       d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                     />
                   </svg>
-                  {loading ? 'Signing in...' : 'Sign in with Gmail'}
+                  {loading ? "Signing in..." : "Sign in with Gmail"}
                 </Button>
 
                 <div className="relative">
@@ -258,7 +341,9 @@ export default function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
                     <Separator className="w-full border-slate-600" />
                   </div>
                   <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-slate-800/50 px-2 text-slate-400">Or continue with</span>
+                    <span className="bg-slate-800/50 px-2 text-slate-400">
+                      Or continue with
+                    </span>
                   </div>
                 </div>
 
@@ -285,7 +370,7 @@ export default function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
                       autoComplete="current-password"
                     />
                   </div>
-                  
+
                   {error && (
                     <motion.div
                       initial={{ opacity: 0, y: -10 }}
@@ -302,7 +387,7 @@ export default function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
                     className="w-full bg-white text-slate-900 hover:bg-slate-100 font-semibold"
                     disabled={loading}
                   >
-                    {loading ? 'Signing in...' : 'Sign In →'}
+                    {loading ? "Signing in..." : "Sign In →"}
                   </Button>
                 </form>
               </TabsContent>
@@ -335,7 +420,7 @@ export default function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
                       d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                     />
                   </svg>
-                  {loading ? 'Signing up...' : 'Sign up with Gmail'}
+                  {loading ? "Signing up..." : "Sign up with Gmail"}
                 </Button>
 
                 <div className="relative">
@@ -343,7 +428,9 @@ export default function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
                     <Separator className="w-full border-slate-600" />
                   </div>
                   <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-slate-800/50 px-2 text-slate-400">Or continue with</span>
+                    <span className="bg-slate-800/50 px-2 text-slate-400">
+                      Or continue with
+                    </span>
                   </div>
                 </div>
 
@@ -392,7 +479,7 @@ export default function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
                       autoComplete="new-password"
                     />
                   </div>
-                  
+
                   {error && (
                     <motion.div
                       initial={{ opacity: 0, y: -10 }}
@@ -409,7 +496,7 @@ export default function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
                     className="w-full bg-white text-slate-900 hover:bg-slate-100 font-semibold"
                     disabled={loading}
                   >
-                    {loading ? 'Creating account...' : 'Sign Up →'}
+                    {loading ? "Creating account..." : "Sign Up →"}
                   </Button>
                 </form>
               </TabsContent>
@@ -420,4 +507,3 @@ export default function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
     </div>
   );
 }
-
